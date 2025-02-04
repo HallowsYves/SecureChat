@@ -13,7 +13,7 @@ ssl_context.load_verify_locations(localhost_pem)
 async def hello():
     uri = "wss://localhost:8765"
     async with connect(uri, ssl=ssl_context) as websocket:
-        name = input("What's your name? ")
+        name = input("What is your name? ")
 
         await websocket.send(name)
         print(f">>> {name}")

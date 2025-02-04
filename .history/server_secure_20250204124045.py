@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import asyncio
 import pathlib
 import ssl
@@ -21,7 +20,7 @@ ssl_context.load_cert_chain(localhost_pem)
 
 async def main():
     async with serve(hello, "localhost", 8765, ssl=ssl_context):
-        await asyncio.get_running_loop().create_future()  # run forever
+        await asyncio.get_event_loop().create_future # runs server forever
 
 if __name__ == "__main__":
     asyncio.run(main())

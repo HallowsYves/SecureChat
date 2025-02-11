@@ -10,16 +10,26 @@ ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 localhost_pem = pathlib.Path(__file__).with_name("localhost.pem")
 ssl_context.load_verify_locations(localhost_pem)
 
-async def hello():
+async def connectToServer():
     uri = "wss://localhost:8765"
-    async with connect(uri, ssl=ssl_context) as websocket:
-        name = input("What's your name? ")
 
-        await websocket.send(name)
-        print(f">>> {name}")
+    try:
+        async with connect(uri, ssl=ssl_context) as websocket:
+            
+            print("Connected to server. Type 'Q' to quit")
+            
+            while True:
+                # Authentication function or something like that
+                message = input("Enter message: ")
 
-        greeting = await websocket.recv()
-        print(f"<<< {greeting}")
+                if message == "Q":
+                    print("Closing connection...")
+                    await websocket.close()
+                    break
+                await websocket.send(message)
+    except Exception as e:
+        print(f"Error: {e}")
+
 
 if __name__ == "__main__":
-    asyncio.run(hello())
+    asyncio.run(connectToServer())

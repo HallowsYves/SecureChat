@@ -3,33 +3,58 @@
 import asyncio
 import pathlib
 import ssl
-
-from websockets.asyncio.client import connect
+import websockets
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 localhost_pem = pathlib.Path(__file__).with_name("localhost.pem")
 ssl_context.load_verify_locations(localhost_pem)
 
-async def connectToServer():
+async def connect_to_server():
     uri = "wss://localhost:8765"
 
     try:
-        async with connect(uri, ssl=ssl_context) as websocket:
-            
-            print("Connected to server. Type 'Q' to quit")
-            
-            while True:
-                # Authentication function or something like that
-                message = input("Enter message: ")
+        async with websockets.connect(uri, ssl=ssl_context) as websocket:
+            print("Connected to SecureChat. Please log in.")
 
-                if message == "Q":
+            username = input("Username: ")
+            await websocket.send(username)
+            
+            password = input("Password: ")
+            await websocket.send(password)
+
+            response = await websocket.recv()
+            print(f"\n{response}\n")
+
+            if "Login Failed" in response:
+                return  
+
+            welcome_message = await websocket.recv()
+            print(welcome_message)
+
+            asyncio.create_task(receive_messages(websocket))
+
+            print("\nType 'Q' to quit.\n")
+
+            while True:
+                message = input("> ")
+                if message.strip().upper() == "Q":
                     print("Closing connection...")
                     await websocket.close()
                     break
                 await websocket.send(message)
-    except Exception as e:
-        print(f"Error: {e}")
 
+    except websockets.exceptions.ConnectionClosed:
+        print("\nConnection closed by server.")
+    except Exception as e:
+        print(f"\nError: {e}")
+
+async def receive_messages(websocket):
+    """ Continuously listens for messages from the server. """
+    try:
+        async for message in websocket:
+            print(f"\n{message}")
+    except websockets.exceptions.ConnectionClosed:
+        print("\nLost connection to the server.")
 
 if __name__ == "__main__":
-    asyncio.run(connectToServer())
+    asyncio.run(connect_to_server())

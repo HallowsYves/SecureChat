@@ -4,6 +4,7 @@ import asyncio
 import pathlib
 import ssl
 import websockets
+import getpass
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 localhost_pem = pathlib.Path(__file__).with_name("localhost.pem")
@@ -19,21 +20,21 @@ async def connect_to_server():
             username = input("Username: ")
             await websocket.send(username)
             
-            password = input("Password: ")
+            password = getpass.getpass("Password: ")
             await websocket.send(password)
 
             response = await websocket.recv()
             print(f"\n{response}\n")
 
             if "Login Failed" in response:
+                print("Exiting Client...\n")
                 return  
-
-            welcome_message = await websocket.recv()
-            print(welcome_message)
-
-            asyncio.create_task(receive_messages(websocket))
-
+            
+            ascii_banner = await websocket.recv()
+            print(ascii_banner)
             print("\nType 'Q' to quit.\n")
+            
+            recieve_task = asyncio.create_task(receive_messages(websocket))
 
             while True:
                 message = input("> ")
@@ -42,6 +43,8 @@ async def connect_to_server():
                     await websocket.close()
                     break
                 await websocket.send(message)
+            recieve_task.cancel()
+
 
     except websockets.exceptions.ConnectionClosed:
         print("\nConnection closed by server.")

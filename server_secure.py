@@ -12,10 +12,7 @@ def generate_ascii_banner():
     return pyfiglet.figlet_format("SecureChat")
 
 async def authenticate(websocket):
-    await websocket.send("Username: ")
     username = await websocket.recv()
-
-    await websocket.send("Password: ")
     password = await websocket.recv()
 
     hashed_password = hashlib.sha256(password.encode()).hexdigest()

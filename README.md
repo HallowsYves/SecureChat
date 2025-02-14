@@ -1,7 +1,7 @@
 # SecureChat
 
 ## HOW TO USE
-* Run `install.sh` to install needed packages
+* Run `soruce install.sh` to install needed packages
 * Modify `sample.py`, insert your credentials of user's that are going to use the program.
 * Run `python server_secure.py` to start the server.
 * Clients can connect by running `python client_secure.py` and inserting their credentials, Happy Chatting!

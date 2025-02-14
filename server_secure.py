@@ -40,9 +40,9 @@ connected_users = {}
 async def chat_handler(websocket):
     username = await authenticate(websocket)
     if not username:
-        return  
+        return
+       
     print(f"User '{username}' joined the chat.")
-
     connected_users[websocket] = username
 
     try:
@@ -50,8 +50,7 @@ async def chat_handler(websocket):
             print(f"{username}: {message}")
             
             for user_ws in connected_users:
-                if user_ws != websocket:  # Don't send the message back to the sender
-                    await user_ws.send(f"{username}: {message}")
+                await user_ws.send(f"{username}: {message}")
 
     except websockets.exceptions.ConnectionClosed:
         print(f"User '{username}' disconnected.")

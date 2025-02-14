@@ -10,6 +10,11 @@ ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 localhost_pem = pathlib.Path(__file__).with_name("localhost.pem")
 ssl_context.load_verify_locations(localhost_pem)
 
+
+async def aysnc_input(prompt=""):
+    return await asyncio.to_thread(input, prompt)
+
+
 async def connect_to_server():
     uri = "wss://localhost:8765"
 
@@ -37,7 +42,7 @@ async def connect_to_server():
             recieve_task = asyncio.create_task(receive_messages(websocket))
 
             while True:
-                message = input("> ")
+                message = await aysnc_input("> ")
                 if message.strip().upper() == "Q":
                     print("Closing connection...")
                     await websocket.close()

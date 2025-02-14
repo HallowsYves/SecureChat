@@ -1,4 +1,4 @@
-# CPSC455-Project-1
+# SecureChat
 
 ## HOW TO USE
 * Modify `sample.py`, insert your credentials of user's that are going to use the program.

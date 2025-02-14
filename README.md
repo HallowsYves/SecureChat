@@ -1,8 +1,9 @@
 # SecureChat
 
 ## HOW TO USE
+* Run `install.sh` to install needed packages
 * Modify `sample.py`, insert your credentials of user's that are going to use the program.
-* Once all libraries and packages have been installed, run `python server_secure.py` to start the server.
+* Run `python server_secure.py` to start the server.
 * Clients can connect by running `python client_secure.py` and inserting their credentials, Happy Chatting!
 
 ## LIBRARIES USED

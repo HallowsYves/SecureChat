@@ -48,13 +48,13 @@ async def chat_handler(websocket):
     try:
         async for message in websocket:
             print(f"{username}: {message}")
-            
             for user_ws in connected_users:
                 await user_ws.send(f"{username}: {message}")
 
     except websockets.exceptions.ConnectionClosed:
-        print(f"User '{username}' disconnected.")
+        pass
     finally:
+        print(f"User '{username}' disconnected.")
         if websocket in connected_users:
             del connected_users[websocket]
 
@@ -64,7 +64,7 @@ ssl_context.load_cert_chain(localhost_pem)
 
 async def main():
     print("SecureChat Server Started...")
-    async with websockets.serve(chat_handler, "localhost", 8765, ssl=ssl_context):
+    async with websockets.serve(chat_handler, "localhost", 8765, ssl=ssl_context, ping_interval=20, ping_timeout=20):
         await asyncio.get_running_loop().create_future()  # Keep running
 
 asyncio.run(main())

@@ -5,14 +5,15 @@
 * Run `./server_secure.py` to start the server.
 * Clients can connect by running `./client_secure.py` and inserting their credentials, Happy Chatting!
 
-## client_secure.py
-`client_secure.py` is the client application that connects the SecureChat server allowing users to:
+## `client_secure.py`
+client application that connects the SecureChat server allowing users to:
 * Log in with their credentials(defined in sample.py)
 * Send messages in real-time
 * Recieve messages from other users
 * Handle rate limiting messages from the server.
 
-## server_secure.py
+## `server_secure.py`
+Backend WebSocket Server
 * Authenticates users via local SQLite (userdata.db).
 * Sends messages between connected clients in real time.
 * Prevents spam/abuse with rate limiting.

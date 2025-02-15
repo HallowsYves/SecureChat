@@ -1,10 +1,12 @@
-# SecureChat
 
 ## HOW TO USE
-* Run `install.sh` to install needed packages
-* Modify `sample.py`, insert your credentials of user's that are going to use the program.
+* Run `soruce install.sh` to install needed packages
+* Modify `sample.py`, insert your credentials of user's that are going to use the program, Once inserted run `python sample.py` to setup the database
 * Run `python server_secure.py` to start the server.
 * Clients can connect by running `python client_secure.py` and inserting their credentials, Happy Chatting!
+
+## server_secure.py
+
 
 ## LIBRARIES USED
 * asyncio - Handling of asynchronus event loops and concurrency

@@ -5,6 +5,7 @@ import pathlib
 import ssl
 import sqlite3
 import hashlib
+import time
 import websockets
 import pyfiglet  # For ASCII banner
 
@@ -45,8 +46,24 @@ async def chat_handler(websocket):
     print(f"User '{username}' joined the chat.")
     connected_users[websocket] = username
 
+    # Rate Limiting
+    allowed_messages = 5
+    time_window = 10
+    message_timestamp =[]
+
     try:
         async for message in websocket:
+            current_time = time.time()
+            # clean old time stamps
+            message_timestamp = [time_s for time_s in message_timestamp if current_time - time_s < time_window]
+
+            if len(message_timestamp) >= allowed_messages:
+                await websocket.send("Rate limit exceeded. Slow down please!")
+                continue
+            else:
+                message_timestamp.append(current_time)
+
+
             print(f"{username}: {message}")
             for user_ws in connected_users:
                 await user_ws.send(f"{username}: {message}")

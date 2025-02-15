@@ -71,7 +71,9 @@ async def receive_messages(websocket):
     """ Continuously listens for messages from the server. """
     try:
         async for message in websocket:
-            print(f"\n{message}")
+            print()
+            print(f"{message}")
+            print("> ", end="", flush=True)
     except websockets.exceptions.ConnectionClosed:
         print("\nLost connection to the server.")
 

@@ -1,5 +1,12 @@
 import sqlite3
 import hashlib
+"""
+PUT USERNAMES AND PASSWORDS HERE
+"""
+credentials = [("username1","password1"),
+               ("username2","password2")
+               # add more as needed
+]
 
 connection_ = sqlite3.connect("userdata.db")
 cur = connection_.cursor()
@@ -12,15 +19,8 @@ CREATE TABLE IF NOT EXISTS userdata (
 )
 """)
 
-# Sample users
-username1, password1 = "", hashlib.sha256("".encode()).hexdigest()
-username2, password2 = "", hashlib.sha256("".encode()).hexdigest()
-
-cur.execute("INSERT OR IGNORE INTO userdata (username, password) VALUES (?,?)", (username1, password1))
-cur.execute("INSERT OR IGNORE INTO userdata (username, password) VALUES (?,?)", (username2, password2))
-
-# Save changes and close connection
+# Load users
+for username, password in credentials:
+  cur.execute("INSERT OR IGNORE INTO userdata (username, password) VALUES (?,?)", (username, hashlib.sha256(password.encode()).hexdigest()))
 connection_.commit()
 connection_.close()
-
-print("Database setup complete. Users added.")

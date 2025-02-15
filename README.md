@@ -1,6 +1,6 @@
 
 ## HOW TO USE
-* Run `soruce install.sh` to install needed packages
+* Run `source install.sh` to install needed packages
 * Modify `sample.py`, insert your credentials of user's that are going to use the program, Once inserted run `python sample.py` to setup the database
 * Run `./server_secure.py` to start the server.
 * Clients can connect by running `./client_secure.py` and inserting their credentials, Happy Chatting!

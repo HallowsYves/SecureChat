@@ -13,6 +13,7 @@ function sendMessage(event) {
 document.querySelector('form')
     .addEventListener('submit', sendMessage);
 
+// Listens for messages,
 socket.addEventListener('message', ({data}) => {
     const listItem = document.createElement('li');
     listItem.textContent = data;

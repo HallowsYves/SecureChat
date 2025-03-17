@@ -1,7 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from typing import List
 
-app = FastAPI()  # Ensure this is present
 
-@app.get("/")
-def home():
-    return {"message": "SecureChat FastAPI Server is Running"}
+app = FastAPI() 
+

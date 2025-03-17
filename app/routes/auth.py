@@ -1,19 +1,27 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 import jwt
+from passlib.context import CryptContext
+
+from app.db import get_db
+from app.models.user import User
+
 
 router = APIRouter()
+
 SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# hashing 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 fake_users_db = {
     "user@example.com": {"username": "user", "password": "password123"}
 }
-
 
 """
 Copies input data and adds an expiration date to it, 

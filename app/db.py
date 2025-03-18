@@ -1,18 +1,23 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+# Database URL (Modify for PostgreSQL, MySQL, etc.)
 DATABASE_URL = "sqlite:///./chat.db"
 
+# Database engine
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
+# Session factory
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class for models
 Base = declarative_base()
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
-database = SessionLocal()
 
-class Message(Base):
-    __tablename__ = "messages"
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String)
-    message = Column(String)
-
-Base.metadata.create_all(bind=engine)
+# Dependency function to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

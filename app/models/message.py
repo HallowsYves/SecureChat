@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
+from app.db import Base
+
 from app.db import Base
 
 class Message(Base):

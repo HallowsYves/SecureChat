@@ -2,6 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node .",
     "def": "nodemon ."
@@ -11,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "express": "^4.21.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

@@ -17,9 +17,9 @@ class RegisterRequest(BaseModel):
     password: str
 
 """
-  User Registration:
-- Stores a new user in the database with a hashed password.
-- Uses `RegisterRequest` model for validation.
+    User Registration:
+    - Stores a new user in the database with a hashed password.
+    - Uses `RegisterRequest` model for validation.
 """
 @router.post("/register")
 def register(request: RegisterRequest, db: Session = Depends(get_db)):
@@ -37,9 +37,9 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     return {"message": "User registered successfully"}
 
 """
-  User Login:
-- Validates user credentials.
-- Returns a JWT token if successful.
+    User Login:
+    - Validates user credentials.
+    - Returns a JWT token if successful.
 """
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -52,9 +52,9 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": access_token, "token_type": "bearer"}
 
 """
-  Protected Route:
-- Requires authentication via JWT.
-- Returns a success message if valid.
+    Protected Route:
+    - Requires authentication via JWT.
+    - Returns a success message if valid.
 """
 @router.get("/protected")
 def protected_route(token: str = Depends(oauth2_scheme)):

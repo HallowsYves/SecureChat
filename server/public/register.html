@@ -27,12 +27,16 @@
             });
 
             const data = await response.json();
-            if (response.ok) {
-                alert("Registration successful! Redirecting to login.");
-                window.location.href = 'auth.html';
-            } else {
+
+            if (!response.ok) {
+                // Show the error message from backend
                 alert(data.error);
+                return;
             }
+
+            alert("Registration successful!");
+            // Optionally redirect to login page
+            window.location.href = 'auth.html';
         });
     </script>
 </body>

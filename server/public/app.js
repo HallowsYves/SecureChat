@@ -7,6 +7,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import path from 'path';
 
+
 import authRoutes from '../routes/auth.routes.js'; // ✅ Corrected path for public/
 
 

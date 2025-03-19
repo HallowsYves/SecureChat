@@ -7,6 +7,29 @@
     <title>Websockets</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // ✅ Ensure user is logged in
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("You must log in first!");
+                window.location.href = 'auth.html'; 
+            }
+
+            // ✅ Ask for a username if not already stored
+            let username = localStorage.getItem("username");
+            if (!username) {
+                username = prompt("Enter your username:");
+                if (username) {
+                    localStorage.setItem("username", username);
+                } else {
+                    alert("Username is required to continue.");
+                    window.location.reload(); // Ask again
+                }
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 alert("You must log in first!");

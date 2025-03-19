@@ -26,7 +26,7 @@ messageForm.addEventListener("submit", (e) => {
             username: username,  // Using the fallback variable
             text: messageInput.value.trim()
         };
-        console.log("📨 Sending message:", messageData); // Debug log
+        console.log("Sending message:", messageData); // Debug log
 
         socket.emit("message", messageData); // Send the message as an object
         messageInput.value = "";
@@ -39,7 +39,7 @@ socket.on("message", (data) => {
 
     // Validate data structure
     if (!data.username || !data.text) {
-        console.error("❌ Invalid message received:", data);
+        console.error(" Invalid message received:", data);
         return;
     }
 

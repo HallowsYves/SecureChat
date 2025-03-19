@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import path from 'path';
 
 
-import authRoutes from '../routes/auth.routes.js'; // ✅ Corrected path for public/
+import authRoutes from '../routes/auth.routes.js'; //  Corrected path for public/
 
 
 
@@ -36,29 +36,29 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/SecureChatDB')
-.then(() => console.log("✅ Connected to MongoDB"))
-.catch(err => console.error("❌ MongoDB Connection Error:", err));
+.then(() => console.log(" Connected to MongoDB"))
+.catch(err => console.error(" MongoDB Connection Error:", err));
 
 
 app.use('/auth', authRoutes);
 
 // WebSocket Chat Logic
 io.on("connection", (socket) => {
-    console.log(`✅ New user connected: ${socket.id}`);
+    console.log(` New user connected: ${socket.id}`);
 
     // Handle incoming chat messages
     socket.on("message", (data) => {
         console.log(`📨 Message received: ${data}`);
-        io.emit("message", data); // ✅ Broadcast message to all users
+        io.emit("message", data); //  Broadcast message to all users
     });
 
     // Handle user disconnection
     socket.on("disconnect", () => {
-        console.log(`❌ User disconnected: ${socket.id}`);
+        console.log(` User disconnected: ${socket.id}`);
     });
 });
 
 // Start server
 server.listen(3500, () => {
-    console.log('🚀 Server is running on port 3500');
+    console.log(' Server is running on port 3500');
 });

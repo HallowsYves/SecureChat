@@ -7,15 +7,9 @@ import path from 'path';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import multer from 'multer';
 
 import authRoutes from './routes/auth.routes.js'; // Adjust path as needed
-
-
-
-
-// Authentication Routes
-
-// Convert __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -35,12 +29,25 @@ const io = new Server(server, {
     }
 });
 
-
 // Middleware
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
+
+
+// Multer config
+const upload = multer({dest: 'uploads/'});
+
+app.post('/upload', upload.single('myFile'), (req,res) => {
+    try {
+        console.log('Uploaded file:', req.file);
+        res.json({message: 'File uploaded successfully!', file:req.file});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error: 'File upload failed'});
+    }
+});
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/SecureChatDB')

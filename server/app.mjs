@@ -1,13 +1,14 @@
 import express from 'express';
-import { createServer } from 'http';
+import https from 'https';
+import fs from 'fs';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
+import path from 'path';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import path from 'path';
 
-import authRoutes from '../routes/auth.routes.js'; // Ensure this file is using ES module exports
+import authRoutes from './routes/auth.routes.js'; // Adjust path as needed
 
 
 
@@ -19,7 +20,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = createServer(app);
+
+const httpsOptions = {
+    key: fs.readFileSync(path.join(__dirname, '../certs/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../certs/server.cert'))
+  };
+
+const server = https.createServer(httpsOptions, app);
+
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -39,7 +47,7 @@ mongoose.connect('mongodb://localhost:27017/SecureChatDB')
 .then(() => console.log(" Connected to MongoDB"))
 .catch(err => console.error(" MongoDB Connection Error:", err));
 
-
+// Routes 
 app.use('/auth', authRoutes);
 
 
@@ -61,5 +69,5 @@ io.on("connection", (socket) => {
 
 // Start server
 server.listen(3500, () => {
-    console.log(' Server is running on port 3500');
-});
+    console.log('SecureChat is running on https://localhost:3500');
+  });

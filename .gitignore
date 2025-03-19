@@ -3,3 +3,4 @@
 .env
 sc/
 node_modules/
+certs/

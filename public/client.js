@@ -1,5 +1,5 @@
 // Connect to the Socket.IO server
-const socket = io('http://localhost:3500');
+const socket = io('https://localhost:3500', { secure: true });
 
 // Select the necessary DOM elements
 const messageForm = document.querySelector("form");
@@ -35,7 +35,7 @@ messageForm.addEventListener("submit", (e) => {
 
 // Handle receiving messages
 socket.on("message", (data) => {
-    console.log("📩 Received message:", data); // Debug log
+    console.log(" Received message:", data); // Debug log
 
     // Validate data structure
     if (!data.username || !data.text) {

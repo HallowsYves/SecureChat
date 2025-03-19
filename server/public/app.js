@@ -1,39 +1,30 @@
-const socket = io('ws://localhost:3500')
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const activity = document.querySelector('.activity')
-const messageInput = document.querySelector('input')
+import authRoutes from '../routes/auth.routes.js'; 
 
-function sendMessage(e) {
-    e.preventDefault()
-    if (messageInput.value) {
-        socket.emit('message', messageInput.value)
-        messageInput.value = ""
-    }
-    messageInput.focus()
-}
+// Convert __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-document.querySelector('form')
-    .addEventListener('submit', sendMessage)
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Listen for messages 
-socket.on("message", (data) => {
-    activity.textContent = ""
-    const li = document.createElement('li')
-    li.textContent = data
-    document.querySelector('ul').appendChild(li)
+mongoose.connect('mongodb://localhost:27017/SecureChatDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => console.error("MongoDB Connection Error:", err));
 
-messageInput.addEventListener('keypress', () => {
-    socket.emit('activity', socket.id.substring(0,5))
-})
+app.use('/auth', authRoutes);
 
-let activityTimer
-socket.on("activity", (name) => {
-    activity.textContent = `${name} is typing...`
-
-    // clear after 3 seconds
-    clearTimeout(activity)
-    activityTimer = setTimeout(() => {
-        activity.textContent = ""
-    }, 3000)
-})
+app.listen(3500, () => {
+    console.log('Server is running on port 3500');
+});

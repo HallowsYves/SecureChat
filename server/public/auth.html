@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SecureChat Login</title>
+</head>
+<body>
+    <h2>Login to SecureChat</h2>
+    <form id="login-form">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="register.html">Sign up</a></p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent page refresh
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                console.log("Logging in with:", username, password); 
+                try {
+                    const response = await fetch('/auth/login', { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (!response.ok) {
+                        const data = await response.json();
+                        alert(data.error);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token); 
+                    alert("Login successful! Redirecting to chat.");
+                    window.location.href = 'chat.html';
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    alert("An error occurred while logging in.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

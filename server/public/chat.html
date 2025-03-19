@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Websockets</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("You must log in first!");
+                window.location.href = 'auth.html'; 
+            }
+        });       
+    </script>
+
     <link href="style.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"
         integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w=="
@@ -19,6 +29,19 @@
     </form>
     <ul></ul>
     <p class="activity"></p>
+
+
+    <!-- Socket.IO client script -->
+     <script src="/socket.io/socket.io.js"></script>
+
+     <!-- Front End -->
+     <script src="client.js"></script>
+     <Script>
+        if (!localStorage.getItem('token')) {
+            window.loccation.href = "auth.html";
+        }
+     </Script>
+
 </body>
 
 </html>

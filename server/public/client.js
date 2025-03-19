@@ -11,7 +11,7 @@ const storedUsername = localStorage.getItem("username");
 const username = storedUsername || "Unknown"; // Use fallback if username is missing
 
 // Debug log to check username retrieval
-console.log("✅ Retrieved username from localStorage:", username);
+console.log("Retrieved username from localStorage:", username);
 
 // Optional: Listen for when the socket connects
 socket.on("connect", () => {
@@ -26,7 +26,7 @@ messageForm.addEventListener("submit", (e) => {
             username: username,  // Using the fallback variable
             text: messageInput.value.trim()
         };
-        console.log("Sending message:", messageData); // Debug log
+        console.log("📨 Sending message:", messageData); // Debug log
 
         socket.emit("message", messageData); // Send the message as an object
         messageInput.value = "";

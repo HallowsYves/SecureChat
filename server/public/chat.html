@@ -8,15 +8,20 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- Socket.IO (local or CDN) -->
-  <!-- If you prefer the local Socket.IO script from your server, uncomment:
-       <script src="/socket.io/socket.io.js"></script> 
-       and remove the CDN link below. 
-       Otherwise, keep the CDN link and remove the local one. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"
           integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w=="
           crossorigin="anonymous"
           referrerpolicy="no-referrer">
   </script>
+
+
+  <!-- Load Emoji Button Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js"></script>
+  <script type="module" src="/chat.js"></script>
+
+  
+
+
 
   <!-- Initial Authentication & Username Check -->
   <script>
@@ -52,7 +57,9 @@
       <ul id="messages"></ul>
       <form id="messageForm">
         <input type="text" id="messageInput" placeholder="Type your message..." />
-        <button type="submit">Send</button>
+        <!-- Emoji Picker Button-->
+        <button id="emojiButton" type="button">😊</button>
+        <button id="sendButton">Send</button>
       </form>
     </div>
 
@@ -66,6 +73,6 @@
   <!-- Your Front-End Chat Logic -->
   <script src="client.js"></script>
   <!-- Optional: Additional JS (if app.js is needed) -->
-  <script src="app.js"></script>
+  <script type=""module src="app.mjs"></script>
 </body>
 </html>

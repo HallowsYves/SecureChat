@@ -7,8 +7,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import path from 'path';
 
+import authRoutes from '../routes/auth.routes.js'; // Ensure this file is using ES module exports
 
-import authRoutes from '../routes/auth.routes.js'; //  Corrected path for public/
 
 
 
@@ -41,6 +41,7 @@ mongoose.connect('mongodb://localhost:27017/SecureChatDB')
 
 
 app.use('/auth', authRoutes);
+
 
 // WebSocket Chat Logic
 io.on("connection", (socket) => {

@@ -36,18 +36,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 
 
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Multer config
 const upload = multer({dest: 'uploads/'});
 
-app.post('/upload', upload.single('myFile'), (req,res) => {
-    try {
-        console.log('Uploaded file:', req.file);
-        res.json({message: 'File uploaded successfully!', file:req.file});
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({error: 'File upload failed'});
+app.post('/upload', upload.single('myFile'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
-});
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({
+      message: 'File uploaded successfully!',
+      fileUrl,
+      originalName: req.file.originalname,
+      mimetype: req.file.mimetype,
+    });
+  });
+  
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/SecureChatDB')

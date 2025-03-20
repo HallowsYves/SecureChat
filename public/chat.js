@@ -1,11 +1,16 @@
 import { Picker } from 'https://cdn.skypack.dev/emoji-mart';
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Get references to DOM elements
+  // Establish a Socket.IO connection
+  const socket = io();
+
+  // Get DOM elements
   const messageInput = document.getElementById("messageInput");
   const emojiButton = document.getElementById("emojiButton");
   const fileButton = document.getElementById("fileButton");
   const fileInput = document.getElementById("fileInput");
+  const sendButton = document.getElementById("sendButton");
+  const messagesList = document.getElementById("messages");
 
   // Initialize the emoji picker
   const picker = new Picker({
@@ -22,12 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
   picker.style.display = 'none';
   document.body.appendChild(picker);
 
-  // Toggle the emoji picker when the emoji button is clicked
+  // Toggle emoji picker on emoji button click
   emojiButton.addEventListener("click", () => {
     picker.style.display = (picker.style.display === 'none' ? 'block' : 'none');
   });
 
-  // File upload: trigger the hidden file input when file button is clicked
+  // Trigger hidden file input when file button is clicked
   fileButton.addEventListener("click", () => {
     fileInput.click();
   });
@@ -50,20 +55,51 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (data && data.fileUrl) {
-        // For example, emit a chat message containing a download link:
-        // (Assumes you have a socket connection set up)
-        // socket.emit("message", `File uploaded: <a href="${data.fileUrl}" target="_blank">Download File</a>`);
+        // Build a structured file message object
+        const fileMessage = {
+          type: 'file',
+          sender: localStorage.getItem("username") || "Unknown",
+          fileUrl: data.fileUrl,
+          originalName: data.originalName || file.name,
+          mimetype: data.mimetype,
+        };
 
-        // Alternatively, you can directly append the link to the chat UI:
-        const messages = document.getElementById("messages");
-        const li = document.createElement("li");
-        li.innerHTML = `File uploaded: <a href="${data.fileUrl}" target="_blank">Download File</a>`;
-        messages.appendChild(li);
+        // Emit the file message via Socket.IO
+        socket.emit("message", fileMessage);
       } else {
         console.error("File upload failed: missing fileUrl in response", data);
       }
     } catch (error) {
       console.error("File upload error:", error);
     }
+  });
+
+  // Send text messages when the send button is clicked
+  sendButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    const message = messageInput.value.trim();
+    if (message !== "") {
+      socket.emit("message", { type: 'text', text: message, sender: localStorage.getItem("username") || "Anonymous" });
+      messageInput.value = "";
+    }
+  });
+
+  // Listen for incoming messages and display them
+  socket.on("message", (msg) => {
+    const li = document.createElement("li");
+
+    if (msg.type === 'file') {
+      // If file message, check mimetype to display image inline or as a link
+      if (msg.mimetype && msg.mimetype.startsWith("image/")) {
+        li.innerHTML = `${msg.sender}: <br/><img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px;">`;
+      } else {
+        li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
+      }
+    } else if (msg.type === 'text') {
+      li.textContent = `${msg.sender}: ${msg.text}`;
+    } else {
+      li.textContent = msg;
+    }
+    messagesList.appendChild(li);
   });
 });

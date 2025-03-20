@@ -9,6 +9,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import Message from './models/message.js';
+import sanitizeHtml from 'sanitize-html';
 
 import authRoutes from './routes/auth.routes.js'; // Adjust path as needed
 import { logMessage } from './logger.js'; // Import the logger function
@@ -92,6 +93,12 @@ io.on("connection", (socket) => {
     data.sessionId = data.sessionId || sessionId;
 
     // Log the message concurrently using our asynchronous function
+    
+    data.text = sanitizeHtml(data.text, {
+      allowedTags: [],
+      allowedAttributes: {}
+    });
+    
     logMessage(data.sessionId, data.sender, data.text);
 
     // (Optional) Save the message to MongoDB or process further...

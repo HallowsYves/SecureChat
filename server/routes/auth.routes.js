@@ -4,12 +4,26 @@ import Activity from '../models/Activity.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import rateLimit from 'express-rate-limit';
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: 'Too many login attempts from this IP, please try again after 15 minutes.'
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
+  message: 'Too many accounts created from this IP, please try again after an hour.'
+});
+
 
 const router = express.Router();
 const SECRET_KEY = 'your-secret-key'; // Change this in production
 
 // Login route with input sanitization and validation
-router.post('/login', [
+router.post('/login', loginLimiter, [
   // Validate and sanitize inputs:
   check('username')
     .trim()
@@ -61,7 +75,7 @@ router.post('/login', [
 });
 
 // Registration route with input sanitization and validation
-router.post('/register', [
+router.post('/register', registerLimiter, [
   // Validate and sanitize inputs:
   check('username')
     .trim()

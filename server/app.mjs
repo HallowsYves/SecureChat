@@ -9,10 +9,11 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import Message from './models/message.js';
+import {marked} from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
-import authRoutes from './routes/auth.routes.js'; // Adjust path as needed
-import { logMessage } from './logger.js'; // Import the logger function
+import authRoutes from './routes/auth.routes.js';
+import { logMessage } from './logger.js'; 
 
 // Generate UUID
 /*
@@ -94,11 +95,17 @@ io.on("connection", (socket) => {
 
     // Log the message concurrently using our asynchronous function
     
-    data.text = sanitizeHtml(data.text, {
-      allowedTags: [],
-      allowedAttributes: {}
+    let htmlContent = marked.parseInline(data.text);
+    htmlContent = sanitizeHtml(htmlContent, {
+      allowedTags: ['b', 'strong', 'i', 'em', 'u', 'a', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'p', 'br'],
+      allowedAttributes: {
+        'a': ['href', 'target']
+      },
+      allowedSchemes: ['http', 'https', 'mailto']
     });
-    
+
+    data.text = htmlContent;
+
     logMessage(data.sessionId, data.sender, data.text);
 
     // (Optional) Save the message to MongoDB or process further...

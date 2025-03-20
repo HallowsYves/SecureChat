@@ -1,4 +1,5 @@
 import express from 'express';
+import Activity from '../models/Activity.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js'; 
@@ -24,7 +25,14 @@ router.post('/login', async (req, res) => {
         // Generate JWT Token
         const token = jwt.sign({ userId: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
 
+        // Log the sign-in
+        try {
+            const activity = new Activity({ type: 'signIn', username: user.username });
+            await activity.save();
+        } catch (error) {
+            console.error("Sign-in logging error:", error);
 
+        }
         // Send token as response
         res.json({
              message: 'Login successful', 

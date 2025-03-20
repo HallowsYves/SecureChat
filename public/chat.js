@@ -75,6 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Send text messages when the send button is clicked
+
+  const sessionId = localStorage.getItem("currentSessionId") || "abc123";
   sendButton.addEventListener("click", (e) => {
     e.preventDefault();
     const message = messageInput.value.trim();

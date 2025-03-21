@@ -5,3 +5,4 @@ sc/
 node_modules/
 certs/
 logs/
+uploads/

@@ -22,6 +22,17 @@ const registerLimiter = rateLimit({
 const router = express.Router();
 const SECRET_KEY = 'your-secret-key'; // Change this in production
 
+router.get('/users', async (req, res) => {
+  try {
+    // Find all users, select only the username field (omit password and other sensitive data)
+    const users = await User.find({}).select('username');
+    res.json(users);
+  } catch (err) {
+    console.error("Error retrieving users:", err);
+    res.status(500).json({ error: "Failed to retrieve users" });
+  }
+});
+
 // Login route with input sanitization and validation
 router.post('/login', loginLimiter, [
   // Validate and sanitize inputs:

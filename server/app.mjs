@@ -9,18 +9,13 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import Message from './models/message.js';
-import {marked} from 'marked';
+import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
 import authRoutes from './routes/auth.routes.js';
-import { logMessage } from './logger.js'; 
+import { logMessage } from './logger.js';
 
-// Generate UUID
-/*
-  * Replaces, each placeholder with random hexadecimal digit
-  * For x, it uses any random hex digit from (0-f)
-  * For y, it makes sure that the digit is 8,9,a, or b
-*/
+// Generate UUID for a unique session ID per socket connection
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0;
@@ -36,17 +31,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const httpsOptions = {
-    key: fs.readFileSync(path.join(__dirname, '../certs/server.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../certs/server.cert'))
+  key: fs.readFileSync(path.join(__dirname, '../certs/server.key')),
+  cert: fs.readFileSync(path.join(__dirname, '../certs/server.cert'))
 };
 
 const server = https.createServer(httpsOptions, app);
 
 const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
 // Middleware
@@ -56,77 +51,85 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve uploaded files statically
+// If "uploads" folder is inside "server", then path.join(__dirname, 'uploads') is correct.
+// If it's one level up, use path.join(__dirname, '../uploads').
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Auth routes
+app.use('/auth', authRoutes);
 
 // Multer config for file uploads
 const upload = multer({ dest: 'uploads/' });
-
 app.post('/upload', upload.single('myFile'), (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({
-      message: 'File uploaded successfully!',
-      fileUrl,
-      originalName: req.file.originalname,
-      mimetype: req.file.mimetype,
-    });
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.json({
+    message: 'File uploaded successfully!',
+    fileUrl,
+    originalName: req.file.originalname,
+    mimetype: req.file.mimetype,
+  });
 });
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/SecureChatDB')
-.then(() => console.log("Connected to MongoDB"))
-.catch(err => console.error("MongoDB Connection Error:", err));
-
-// Routes
-app.use('/auth', authRoutes);
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB Connection Error:", err));
 
 // WebSocket Chat Logic
 io.on("connection", (socket) => {
-  // For multiple sessions, generate a unique sessionId per connection.
+  // Unique sessionId for this connection
   const sessionId = generateUUID();
   socket.emit("sessionAssigned", { sessionId });
   console.log(`New user connected: ${socket.id} with session: ${sessionId}`);
 
-  socket.on("message", async (data) => {
-    // Ensure every message includes the sessionId
-    data.sessionId = data.sessionId || sessionId;
+  // Join a conversation (room) when requested
+  socket.on("joinConversation", (conversationId) => {
+    socket.join(conversationId);
+    console.log(`Socket ${socket.id} joined conversation ${conversationId}`);
+    socket.emit("conversationJoined", { conversationId });
+  });
 
-    // Log the message concurrently using our asynchronous function
+  // Handle incoming messages
+  socket.on("message", async (data) => {
+    // We require a conversationId to broadcast properly
+    if (!data.conversationId) {
+      console.error("No conversationId provided with message");
+      return;
+    }
+
+    // If it's a text message, convert Markdown to HTML and sanitize
     if (data.type === 'text' && data.text) {
       let htmlContent = marked.parseInline(data.text);
       htmlContent = sanitizeHtml(htmlContent, {
         allowedTags: ['b', 'strong', 'i', 'em', 'u', 'a', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'p', 'br'],
-        allowedAttributes: {
-          'a': ['href', 'target']
-        },
+        allowedAttributes: { 'a': ['href', 'target'] },
         allowedSchemes: ['http', 'https', 'mailto']
       });
-  
       data.text = htmlContent;
-  
     }
-    
-    logMessage(data.sessionId, data.sender, data.text);
 
+    // Log the message using conversationId
+    logMessage(data.conversationId, data.sender, data.text || '[file message]');
 
-    // (Optional) Save the message to MongoDB or process further...
+    // Save text messages to MongoDB if desired
     if (data.type === 'text') {
       try {
         const msg = new Message({
           sender: data.sender,
           content: data.text,
-          sessionId: data.sessionId,
+          conversationId: data.conversationId, // store conversationId in DB
         });
         await msg.save();
       } catch (err) {
         console.error("Error saving message:", err);
       }
     }
-    
-    io.emit("message", data);
+
+    // Broadcast to everyone in that conversation room
+    io.to(data.conversationId).emit("message", data);
   });
 
   socket.on("disconnect", () => {
@@ -134,8 +137,7 @@ io.on("connection", (socket) => {
   });
 });
 
-  
 // Start server
 server.listen(3500, () => {
-    console.log('SecureChat is running on https://localhost:3500');
+  console.log('SecureChat is running on https://localhost:3500');
 });

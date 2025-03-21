@@ -21,18 +21,19 @@ socket.on("connect", () => {
 // Handle message sending
 messageForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (messageInput.value.trim() !== "") {
-        const messageData = {
-            username: username,  // Using the fallback variable
-            text: messageInput.value.trim()
-        };
-        console.log("📨 Sending message:", messageData); // Debug log
-
-        socket.emit("message", messageData); // Send the message as an object
-        messageInput.value = "";
+    const msg = messageInput.value.trim();
+    if (msg && currentConversationId) {
+      socket.emit("message", {
+        conversationId: currentConversationId,
+        type: 'text',
+        text: msg,
+        sender: currentUser
+      });
+      messageInput.value = "";
+    } else {
+      alert("Please select a user to chat with first.");
     }
-});
-
+  });
 // Handle receiving messages
 socket.on("message", (data) => {
     console.log(" Received message:", data); // Debug log

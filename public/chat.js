@@ -89,25 +89,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Listen for incoming messages and display them
   socket.on("message", (msg) => {
+    const messagesList = document.getElementById("messages");
     const li = document.createElement("li");
-    
+  
+    // Check the message type
     if (msg.type === 'file') {
-      // For file messages, check if it's an image to display inline
+      // If it's a file message, determine if it's an image
       if (msg.mimetype && msg.mimetype.startsWith("image/")) {
-        li.innerHTML = `${msg.sender}: <br/><img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px;">`;
+        // Display an inline image preview
+        li.innerHTML = `${msg.sender}:<br/>
+          <img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px;">`;
       } else {
+        // For non-image files, display a clickable download link
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
     } else if (msg.type === 'text') {
-      // Use innerHTML to render the formatted HTML (from Markdown conversion)
+      // For text messages (including Markdown that was sanitized to HTML)
       li.innerHTML = `${msg.sender}: ${msg.text}`;
     } else {
-      li.textContent = msg;
+      // Fallback if 'type' isn't recognized
+      li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;
     }
-    
-    // Append the message once
+  
+    // Finally, append the message element to the messages list
     messagesList.appendChild(li);
   });
+  
 
   // Optional: Listen for session assignment from the server and store it
   socket.on("sessionAssigned", (data) => {

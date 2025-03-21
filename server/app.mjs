@@ -56,7 +56,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve uploaded files statically
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Multer config for file uploads
 const upload = multer({ dest: 'uploads/' });
@@ -94,19 +95,22 @@ io.on("connection", (socket) => {
     data.sessionId = data.sessionId || sessionId;
 
     // Log the message concurrently using our asynchronous function
+    if (data.type === 'text' && data.text) {
+      let htmlContent = marked.parseInline(data.text);
+      htmlContent = sanitizeHtml(htmlContent, {
+        allowedTags: ['b', 'strong', 'i', 'em', 'u', 'a', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'p', 'br'],
+        allowedAttributes: {
+          'a': ['href', 'target']
+        },
+        allowedSchemes: ['http', 'https', 'mailto']
+      });
+  
+      data.text = htmlContent;
+  
+    }
     
-    let htmlContent = marked.parseInline(data.text);
-    htmlContent = sanitizeHtml(htmlContent, {
-      allowedTags: ['b', 'strong', 'i', 'em', 'u', 'a', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'p', 'br'],
-      allowedAttributes: {
-        'a': ['href', 'target']
-      },
-      allowedSchemes: ['http', 'https', 'mailto']
-    });
-
-    data.text = htmlContent;
-
     logMessage(data.sessionId, data.sender, data.text);
+
 
     // (Optional) Save the message to MongoDB or process further...
     if (data.type === 'text') {

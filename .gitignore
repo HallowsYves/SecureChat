@@ -2,3 +2,7 @@
 *.pem
 .env
 sc/
+node_modules/
+certs/
+logs/
+uploads/

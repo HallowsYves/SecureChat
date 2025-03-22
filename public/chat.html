@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureChat Desktop</title>
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Socket.IO (local or CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"
+          integrity="sha512-Xm9qbB6Pu06k3PUwPj785dyTl6oHxgsv9nHp7ej7nCpAqGZT3OZpsELuCYX05DdonFpTlBpXMOxjavIAIUwr0w=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+  </script>
+
+
+  <!-- Load Emoji Button Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js"></script>
+  <script type="module" src="/chat.js"></script>
+
+  
+
+
+
+  <!-- Initial Authentication & Username Check -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("You must log in first!");
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // Ask for a username if not already stored
+      let username = localStorage.getItem("username");
+      if (!username) {
+        username = prompt("Enter your username:");
+        if (username) {
+          localStorage.setItem("username", username);
+        } else {
+          alert("Username is required to continue.");
+          window.location.reload(); // Ask again
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Chat container on the LEFT -->
+    <div id="chatContainer">
+      <h2 id="chatTitle">Select a user to chat with</h2>
+      <ul id="messages"></ul>
+      <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        
+        <!-- Emoji Picker Button-->
+        <button id="emojiButton" type="button">😊</button>
+
+        <!-- File Upload -->
+        <button id="fileButton" type="button">🖇️</button>
+        <input type="file" id="fileInput" style="display: none;" />
+
+        <button id="sendButton">Send</button>
+      </form>
+    </div>
+
+    <!-- Sidebar on the RIGHT -->
+    <div id="sidebar">
+      <h3>Users</h3>
+      <ul id="userList"></ul>
+    </div>
+  </div>
+
+  <!-- Your Front-End Chat Logic -->
+  <script src="client.js"></script>
+  <!-- Optional: Additional JS (if app.js is needed) -->
+  <script type=""module src="app.mjs"></script>
+</body>
+</html>

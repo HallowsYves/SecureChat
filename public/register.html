@@ -1,43 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SecureChat Register</title>
+  <meta charset="UTF-8">
+  <title>SecureChat Register</title>
+  <!-- Link to your CSS file -->
+  <link rel="stylesheet" href="register.css">
 </head>
 <body>
+  <div id="registerContainer">
     <h2>Sign Up for SecureChat</h2>
+    <!-- Updated the form ID to "register-form" to match JS code -->
     <form id="register-form">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Register</button>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Register</button>
     </form>
-    <p>Already have an account? <a href="auth.html">Login</a></p>
+    <p>
+      Already have an account?
+      <a href="auth.html">Login</a>
+    </p>
+  </div>
 
-    <script>
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent page refresh
+  <!-- Script to handle registration -->
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent page refresh
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
 
-            const response = await fetch('https://localhost:3500/auth/register', { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Show the error message from backend
-                alert(data.error);
-                return;
-            }
-
-            alert("Registration successful!");
-            // Optionally redirect to login page
-            window.location.href = 'auth.html';
+      try {
+        // Make sure you've accepted the self-signed certificate at https://localhost:3500
+        const response = await fetch('/auth/register', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
         });
-    </script>
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          // Show the error message from backend
+          alert(data.error || "Registration failed.");
+          return;
+        }
+
+        alert("Registration successful!");
+        // Optionally redirect to login page
+        window.location.href = 'auth.html';
+
+      } catch (error) {
+        console.error("Registration error:", error);
+        alert("An error occurred during registration.");
+      }
+    });
+  </script>
 </body>
 </html>

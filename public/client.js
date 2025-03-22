@@ -1,5 +1,5 @@
 // Connect to the Socket.IO server
-const socket = io('https://localhost:3500', { secure: true });
+const socket = io( { secure: true });
 
 // Select the necessary DOM elements
 const messageForm = document.querySelector("form");

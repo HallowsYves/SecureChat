@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>SecureChat Register</title>
-  <!-- Link to your CSS file -->
   <link rel="stylesheet" href="register.css">
 </head>
 <body>
@@ -21,7 +20,6 @@
     </p>
   </div>
 
-  <!-- Script to handle registration -->
   <script>
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault(); // Prevent page refresh
@@ -30,7 +28,6 @@
       const password = document.getElementById('password').value;
 
       try {
-        // Make sure you've accepted the self-signed certificate at https://localhost:3500
         const response = await fetch('/auth/register', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -40,13 +37,11 @@
         const data = await response.json();
 
         if (!response.ok) {
-          // Show the error message from backend
           alert(data.error || "Registration failed.");
           return;
         }
 
         alert("Registration successful!");
-        // Optionally redirect to login page
         window.location.href = 'auth.html';
 
       } catch (error) {

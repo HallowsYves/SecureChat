@@ -139,5 +139,5 @@ io.on("connection", (socket) => {
 
 // Start server
 server.listen(3500, '0.0.0.0', () => {
-  console.log('SecureChat is running on localIP:3500');
+  console.log(`SecureChat is running on LocalIP:3500`);
 });

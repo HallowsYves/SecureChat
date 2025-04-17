@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import { Server } from 'socket.io';
@@ -30,12 +31,25 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-const httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, '../certs/server.key')),
-  cert: fs.readFileSync(path.join(__dirname, '../certs/server.cert'))
-};
+const useHttps = process.env.USE_HTTPS === 'true';
 
-const server = https.createServer(httpsOptions, app);
+// Choose depending on certs / no certs
+let server;
+
+if (process.env.USE_HTTPS === 'true') {
+  const httpsOptions = {
+    key: fs.readFileSync(path.join(__dirname, '/certs/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, '/certs/server.cert')),
+  };
+  server = https.createServer(httpsOptions, app);
+  console.log('HTTPS server running @ (local dev)');
+} else {
+  server = http.createServer(app);
+  console.log(' HTTP server running');
+}
+
+
+
 
 const io = new Server(server, {
   cors: {

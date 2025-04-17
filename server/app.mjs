@@ -36,7 +36,7 @@ const useHttps = process.env.USE_HTTPS === 'true';
 // Choose depending on certs / no certs
 let server;
 
-if (process.env.USE_HTTPS === 'true') {
+if (useHttps === 'true') {
   const httpsOptions = {
     key: fs.readFileSync(path.join(__dirname, '/certs/server.key')),
     cert: fs.readFileSync(path.join(__dirname, '/certs/server.cert')),

@@ -5,17 +5,21 @@ import fs from 'fs';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import mongoose from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import Message from './models/message.js';
 import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
+import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth.routes.js';
 import { logMessage } from './logger.js';
 
+
+
+dotenv.config();
 // Generate UUID for a unique session ID per socket connection
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -53,7 +57,7 @@ if (useHttps === 'true') {
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"]
   }
 });
@@ -65,8 +69,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve uploaded files statically
-// If "uploads" folder is inside "server", then path.join(__dirname, 'uploads') is correct.
-// If it's one level up, use path.join(__dirname, '../uploads').
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Auth routes
@@ -88,9 +90,9 @@ app.post('/upload', upload.single('myFile'), (req, res) => {
 });
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/SecureChatDB')
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB Connection Error:", err));
+mongoose.connect(process.env.DB_URL,)
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => console.error("MongoDB connection error", err));
 
 // WebSocket Chat Logic
 io.on("connection", (socket) => {
@@ -152,6 +154,8 @@ io.on("connection", (socket) => {
 });
 
 // Start server
-server.listen(3500, '0.0.0.0', () => {
-  console.log(`SecureChat is running on LocalIP:3500`);
+
+const PORT = process.env.PORT || 3500;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`SecureChat is running on port ${PORT}`);
 });

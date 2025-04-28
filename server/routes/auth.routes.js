@@ -20,7 +20,7 @@ const registerLimiter = rateLimit({
 
 
 const router = express.Router();
-const SECRET_KEY = 'your-secret-key';
+const SECRET_KEY = process.env.SECRET_KEY;
 
 router.get('/users', async (req, res) => {
   try {

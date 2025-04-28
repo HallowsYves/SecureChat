@@ -1,17 +1,17 @@
 import fs from 'fs';
 import mongoose from 'mongoose';
-import Message from '../server/models/message.js';
-import Activity from '../server/models/Activity.js';
+import message from '../server/models/message.js';
+import activity from '../server/models/activity.js';
 
 
 // Connect to your MongoDB
 await mongoose.connect('mongodb://localhost:27017/SecureChatDB');
 
 // Fetch Messages
-const allMessages = await Message.find({}).sort({ timestamp: 1 });
+const allMessages = await message.find({}).sort({ timestamp: 1 });
 
 // Fetch activities
-const allActivities = await Activity.find({}).sort({ timestamp: 1});
+const allActivities = await activity.find({}).sort({ timestamp: 1});
 
 const exportData = {
     messages: allMessages,

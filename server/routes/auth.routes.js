@@ -1,6 +1,6 @@
 import express from 'express';
 import { check, validationResult } from 'express-validator';
-import Activity from '../models/activity.js';
+import activity from '../models/activity.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
@@ -70,7 +70,7 @@ router.post('/login', loginLimiter, [
 
   // Log the sign-in event
   try {
-    const activity = new Activity({ type: 'signIn', username: user.username });
+    const activity = new activity({ type: 'signIn', username: user.username });
     await activity.save();
   } catch (error) {
     console.error("Sign-in logging error:", error);
@@ -126,7 +126,7 @@ router.post('/register', registerLimiter, [
 
     // Log the registration event
     try {
-      const activity = new Activity({ type: 'registration', username: newUser.username });
+      const activity = new activity({ type: 'registration', username: newUser.username });
       await activity.save();
     } catch (error) {
       console.error("Registration logging error:", error);

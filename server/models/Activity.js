@@ -6,4 +6,4 @@ const activitySchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-export default mongoose.model('Activity', activitySchema);
+export default mongoose.model('activity', activitySchema);

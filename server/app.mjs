@@ -58,7 +58,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
 const corsOptions = {
   origin: allowedOrigins,
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
 };
 

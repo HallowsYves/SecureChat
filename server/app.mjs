@@ -17,6 +17,9 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import { logMessage } from './logger.js';
 
+dotenv.config();
+
+
 const raw = process.env.ALLOWED_ORIGINS || '';
 const allowedOrigins = raw
   .split(',')
@@ -33,7 +36,6 @@ const corsOptions = {
 
 console.log('CORS allowing origins: ', allowedOrigins);
 
-dotenv.config();
 // Generate UUID for a unique session ID per socket connection
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

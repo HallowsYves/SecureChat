@@ -1,5 +1,9 @@
 // Connect to the Socket.IO server
-const socket = io( { secure: true });
+
+const socket = io(`${BACKEND_URL}`, {
+  transports: ['websocket'],
+  secure: true
+});
 
 // Select the necessary DOM elements
 const messageForm = document.querySelector("form");

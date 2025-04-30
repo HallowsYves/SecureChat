@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>SecureChat Register</title>
-  <link rel="stylesheet" href="register.css">
+  <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
   <div id="registerContainer">
@@ -19,6 +19,8 @@
     </p>
   </div>
 
+
+  <script src="config.js"></script>
   <!-- Script to handle registration -->
   <script>
     document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -28,7 +30,7 @@
       const password = document.getElementById('password').value;
 
       try {
-        const response = await fetch('/auth/register', { 
+        const response = await fetch(`${BACKEND_URL}/auth/register`, { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })

@@ -18,7 +18,6 @@ import authRoutes from './routes/auth.routes.js';
 import { logMessage } from './logger.js';
 
 
-
 dotenv.config();
 // Generate UUID for a unique session ID per socket connection
 function generateUUID() {

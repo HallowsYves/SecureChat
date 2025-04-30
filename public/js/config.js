@@ -1,0 +1,1 @@
+const BACKEND_URL = 'https://securechat-olu7.onrender.com';

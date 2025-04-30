@@ -1,4 +1,5 @@
 import { Picker } from 'https://cdn.skypack.dev/emoji-mart';
+import dotenv from 'dotenv';
 
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)
 function generateConversationId(userA, userB) {
@@ -18,13 +19,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileButton = document.getElementById("fileButton");
   const fileInput = document.getElementById("fileInput");
 
+  const BACKEND_URL = dotenv.BACKEND_URL;
+
   let currentConversationId = null;
   const currentUser = localStorage.getItem("username");
 
   // Load user list from server and populate sidebar
   async function loadUserList() {
     try {
-      const response = await fetch('/auth/users');
+      const response = await fetch(`${BACKEND_URL}/auth/users`);
       if (!response.ok) throw new Error("Failed to fetch user list");
       const users = await response.json();
       
@@ -94,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("myFile", file);
 
     try {
-      const res = await fetch("/upload", {
+      const res = await fetch(`${BACKEND_URL}/upload`, {
         method: "POST",
         body: formData,
       });

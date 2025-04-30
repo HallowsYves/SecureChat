@@ -11,6 +11,8 @@
     <button type="submit">Upload</button>
   </form>
 
+  <script src="config.js"></script>
+
   <script>
     const form = document.getElementById('uploadForm');
     form.addEventListener('submit', async (e) => {
@@ -18,7 +20,7 @@
       const formData = new FormData(form);
 
       try {
-        const res = await fetch('/upload', {
+        const res = await fetch(`${BACKEND_URL}/upload`, {
           method: 'POST',
           body: formData
         });

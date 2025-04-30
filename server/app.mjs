@@ -53,16 +53,20 @@ if (useHttps === 'true') {
 
 
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-    methods: ["GET", "POST"]
-  }
-});
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ['GET', 'POST'],
+  credentials: true
+};
+
+const io = new Server(server, {cors: corsOptions});
+
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

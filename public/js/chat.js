@@ -1,4 +1,3 @@
-import { Picker } from 'https://cdn.skypack.dev/emoji-mart';
 import dotenv from 'dotenv';
 
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)

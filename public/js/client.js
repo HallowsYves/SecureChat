@@ -38,6 +38,8 @@ messageForm.addEventListener("submit", (e) => {
       alert("Please select a user to chat with first.");
     }
   });
+
+
 // Handle receiving messages
 socket.on("message", (data) => {
     console.log(" Received message:", data); // Debug log

@@ -65,23 +65,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize the emoji picker
-  const picker = new Picker({
-    set: 'apple',
-    onEmojiSelect: (emoji) => {
-      messageInput.value += emoji.native;
-      picker.style.display = 'none';
-    },
-  });
-  picker.style.position = 'absolute';
-  picker.style.bottom = '50px';
-  picker.style.display = 'none';
-  document.body.appendChild(picker);
 
-  // Toggle emoji picker on emoji button click
-  document.getElementById("emojiButton").addEventListener("click", () => {
-    picker.style.display = (picker.style.display === 'none' ? 'block' : 'none');
-  });
+  // Emoji Picker integration
+  const emojiButton = document.querySelector('#emojiButton');
+  const emojiPicker = document.querySelector('#emojiPicker');
+
+  emojiButton.addEventListener('click', () => {
+    emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    const {bottom, left } = emojiButton.getBoundingClientRect();
+    emojiPicker.style.top = `${bottom + window.scrollY}px`;
+    emojiPicker.style.left = `${bottom + window.scrollX}px`;
+    
+  })
+
+
+
+  emojiPicker.addEventListener('emoji-click', event => {
+    messageInput.value += event.detail.unicode;
+    messageInput.value += event.detail.unicode;
+    emojiPicker.style.display = 'none';
+  }) 
 
   // Trigger file input when file button is clicked
   fileButton.addEventListener("click", () => {

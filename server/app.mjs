@@ -17,6 +17,21 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import { logMessage } from './logger.js';
 
+const raw = process.env.ALLOWED_ORIGINS || '';
+const allowedOrigins = raw
+  .split(',')
+  .map(origin => origin.trim())
+  // ensure both http/https variants
+  .flatMap(o => o.startsWith('http') ? [o] : [])
+;
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true
+};
+
+console.log('CORS allowing origins: ', allowedOrigins);
 
 dotenv.config();
 // Generate UUID for a unique session ID per socket connection
@@ -53,14 +68,7 @@ if (useHttps === 'true') {
 
 
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
-
-const corsOptions = {
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true
-};
 
 const io = new Server(server, {cors: corsOptions});
 

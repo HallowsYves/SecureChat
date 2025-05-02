@@ -74,6 +74,11 @@ if (useHttps === 'true') {
 
 const io = new Server(server, {cors: corsOptions});
 
+// MIME type for .mjs files so browsers don't reject
+app.get('*.mjs', function(req, res, next) {
+  res.type("application/javascript");
+  next();
+});
 
 // Middleware
 app.use(cors(corsOptions));

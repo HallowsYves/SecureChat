@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   emojiPicker.addEventListener('emoji-click', event => {
     messageInput.value += event.detail.unicode;
-    messageInput.value += event.detail.unicode;
     emojiPicker.style.display = 'none';
   }) 
 

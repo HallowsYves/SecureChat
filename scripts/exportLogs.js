@@ -4,7 +4,6 @@ import message from '../server/models/message.js';
 import activity from '../server/models/activity.js';
 
 
-// Connect to your MongoDB
 await mongoose.connect('mongodb://localhost:27017/SecureChatDB');
 
 // Fetch Messages

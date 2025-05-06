@@ -55,8 +55,8 @@
       <form id="messageForm">
         <input type="text" id="messageInput" placeholder="Type your message..." />
         
-        <!-- Emoji Picker Button-->
-        <div class="emoji-wrapper">
+        <!-- Emoji Picker Button (wrapped for positioning) -->
+        <div class="emoji-wrapper" style="position: relative; display: inline-block;">
           <button id="emojiButton" type="button">😊</button>
           <emoji-picker id="emojiPicker"
                          style="position: absolute; display: none; z-index: 1000;">
@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  <!-- Your Front-End Chat Logic -->
+  <!--  Front-End Chat Logic -->
   <script src="js/client.js"></script>
 </body>
 </html>

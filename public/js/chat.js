@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileInput = document.getElementById("fileInput");
 
   const BACKEND_URL = "https://securechat-olu7.onrender.com";
-  
+
   let currentConversationId = null;
   const currentUser = localStorage.getItem("username");
 
@@ -71,8 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
     const {bottom, left } = emojiButton.getBoundingClientRect();
     emojiPicker.style.top = `${bottom + window.scrollY}px`;
-    emojiPicker.style.left = `${bottom + window.scrollX}px`;
-    
+    emojiPicker.style.left = `${left + window.scrollX}px`;    
   })
 
 

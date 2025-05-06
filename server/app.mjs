@@ -6,6 +6,7 @@ import fs from 'fs';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import MongoStore from 'connect-mongo';
 import mongoose, { mongo } from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -30,6 +31,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.DB_URL,
+    collectionName: 'sessions'
+  }),
 }));
 
 

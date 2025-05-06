@@ -32,13 +32,17 @@
           body: JSON.stringify({ username, password })
         });
         
-        const data = await response.json();
         
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Raw server response:", errorText);
+          alert("Login failed.");
           alert(data.error || "Login failed.");
           return;
         }
         
+
+        const data = await response.json();
         console.log("Login response data:", data);
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);

@@ -23,6 +23,9 @@ dotenv.config();
 
 
 // SETUP session 
+const app = express();
+
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -59,7 +62,6 @@ function generateUUID() {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
 
 const useHttps = process.env.USE_HTTPS === 'true';
 

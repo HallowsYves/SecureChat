@@ -34,6 +34,12 @@ router.get('/users', async (req, res) => {
   }
 });
 
+router.get('/publicKey/:username', async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+  if (!user || !user.publicKey) return res.status(404).json({ error: 'User not found' });
+  res.json({ publicKey: user.publicKey });
+});
+
 // Login route with input sanitization and validation
 router.post('/login', loginLimiter, [
   // Validate and sanitize inputs:

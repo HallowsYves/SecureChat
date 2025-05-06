@@ -45,13 +45,58 @@
         console.log("Login response data:", data);
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
-        
+
+        // Only generate key if it doesn't already exist
+        try {
+          if (!localStorage.getItem("privateKey")) {
+            await generateKeyPairAndUpload(data.token);
+          } else {
+            console.log("Using existing encryption key");
+          }
+        } catch(e) {
+          console.error("Key Generation or upload failed: ", e);
+          alert("Encryption Setup Error.");
+          return;
+        }
+
+
+
         window.location.href = 'chat.html';
       } catch (error) {
         console.error("Login error:", error);
         alert("An error occurred during login.");
       }
     });
+
+    async function generateKeyPairAndUpload(token) {
+      const keyPair = await window.crypto.subtle.generateKey({
+        name: "RSA-OAEP",
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+    true,
+    ["encrypt", "decrypt"]
+  );
+
+    const publicKey = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+    const privateKey = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+    
+    localStorage.setItem("privateKey", JSON.stringify(privateKey));
+
+
+    await fetch(`${BACKEND_URL}/auth/savePublicKey`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ publicKey })
+    });
+    }
+
   </script>
+
 </body>
 </html>

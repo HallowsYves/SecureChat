@@ -20,6 +20,36 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentConversationId = null;
   const currentUser = localStorage.getItem("username");
 
+  // HELPER FUNCTIONS
+  async function getPrivateKey() {
+    const privateKeyJwk = JSON.parse(localStorage.getItem("privateKey"));
+    if (!privateKeyJwk) {
+      console.error("No private key found in localStorage");
+      return null;
+    }
+
+    return await window.crypto.subtle.importKey(
+      "jwk",
+      privateKeyJwk,
+      {
+        name: "RSA-OAEP",
+        hash: "SHA-256"
+      },
+      true,
+      ["decrypt"]
+    );
+  }
+
+  function base64ToArrayBuffer(base64) {
+    const binary = atob(base64);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
   // Load user list from server and populate sidebar
   async function loadUserList() {
     try {
@@ -120,16 +150,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Sending text messages when the message form is submitted.
-// Correct: includes conversationId
-document.getElementById("messageForm").addEventListener("submit", (e) => {
+  const publicKeys = new Map();
+
+  // Fetch user's public key from the server and cache it.
+  async function fetchPublicKey(username) {
+    if (publicKeys.has(username)) return publicKeys.get(username);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${BACKEND_URL}/auth/publicKey/${username}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`Failed to fetch public key for ${username}`);
+      return null;
+    }
+
+    const {publicKey: jwk} = await response.json();
+    const key = await window.crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      {
+        name: "RSA-OAEP",
+        hash: "SHA-256"
+      },
+      true,
+      ["encrypt"]
+    );
+
+    publicKeys.set(username, key);
+    return key;
+  }
+
+  function arrayBufferToBase64(buffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  }
+
+
+// Sending text messages when the message form is submitted.
+document.getElementById("messageForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const message = messageInput.value.trim();
   if (message && currentConversationId) {
+    const recipient = chatTitle.textContent.replace("Talking with: ", "").trim();
+    const recipientKey = await fetchPublicKey(recipient);
+    if (!recipientKey) {
+      alert("Could not fetch recipient encryption key.");
+      return;
+    }
+
+    const encoded = new TextEncoder().encode(message);
+    const encrypted = await window.crypto.subtle.encrypt(
+      { name: "RSA-OAEP" },
+      recipientKey,
+      encoded
+    );
+    const encryptedBase64 = arrayBufferToBase64(encrypted);
+
     socket.emit("message", {
       conversationId: currentConversationId,
       type: 'text',
-      text: message,
+      text: encryptedBase64,
       sender: currentUser || "Anonymous"
     });
     messageInput.value = "";
@@ -151,7 +233,24 @@ document.getElementById("messageForm").addEventListener("submit", (e) => {
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
     } else if (msg.type === 'text') {
-      li.innerHTML = `${msg.sender}: ${msg.text}`;
+      (async () => {
+        let decryptedText = "[Unable to decrypt]";
+        try {
+          const privateKey = await getPrivateKey();
+          const decryptedBuffer = await window.crypto.subtle.decrypt(
+            { name: "RSA-OAEP" },
+            privateKey,
+            base64ToArrayBuffer(msg.text)
+          );
+          decryptedText = new TextDecoder().decode(decryptedBuffer);
+        } catch (err) {
+          console.error("Failed to decrypt message:", err);
+        }
+        li.innerHTML = `${msg.sender}: ${decryptedText}`;
+        messagesList.appendChild(li);
+      })();
+      return;
+      
     } else {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;
     }

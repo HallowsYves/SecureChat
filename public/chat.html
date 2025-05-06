@@ -55,13 +55,11 @@
       <form id="messageForm">
         <input type="text" id="messageInput" placeholder="Type your message..." />
         
-        <!-- Emoji Picker Button (wrapped for positioning) -->
-        <div class="emoji-wrapper" style="position: relative; display: inline-block;">
-          <button id="emojiButton" type="button">😊</button>
-          <emoji-picker id="emojiPicker"
-                         style="position: absolute; display: none; z-index: 1000;">
-          </emoji-picker>
-        </div>
+        <!-- Emoji Picker Button-->
+        <button id="emojiButton" type="button">😊</button>
+        <emoji-picker id="emojiPicker"
+                       style="position: absolute; display: none; z-index: 1000;">
+        </emoji-picker>
 
         <!-- File Upload -->
         <button id="fileButton" type="button">🖇️</button>
@@ -78,7 +76,7 @@
     </div>
   </div>
 
-  <!--  Front-End Chat Logic -->
+  <!-- Your Front-End Chat Logic -->
   <script src="js/client.js"></script>
 </body>
 </html>

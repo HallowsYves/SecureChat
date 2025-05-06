@@ -68,11 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const emojiPicker = document.querySelector('#emojiPicker');
 
   emojiButton.addEventListener('click', () => {
-    emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
-    const {bottom, left } = emojiButton.getBoundingClientRect();
+    const isHidden = emojiPicker.style.display === 'none' || !emojiPicker.style.display;
+    emojiPicker.style.display = isHidden ? 'block' : 'none';
+
+    const { bottom, left } = emojiButton.getBoundingClientRect();
+    emojiPicker.style.position = 'absolute';
     emojiPicker.style.top = `${bottom + window.scrollY}px`;
-    emojiPicker.style.left = `${left + window.scrollX}px`;    
-  })
+    emojiPicker.style.left = `${left + window.scrollX}px`;
+    emojiPicker.style.zIndex = 1000;
+  });
 
 
 

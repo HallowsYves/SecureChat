@@ -21,11 +21,15 @@ import { logMessage } from './logger.js';
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 // SETUP session 
 const app = express();
 
+// Serve front end
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -64,8 +68,7 @@ function generateUUID() {
 }
 
 // Convert __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 
 const useHttps = process.env.USE_HTTPS === 'true';
@@ -100,7 +103,6 @@ app.get('*.mjs', function(req, res, next) {
 // Middleware
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

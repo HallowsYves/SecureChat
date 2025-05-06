@@ -3,6 +3,19 @@
     font-size: 1.5rem;
 }
 
+#emojiPicker {
+    position: absolute;
+    top: 100%;       /* position below the button */
+    left: 0;
+    z-index: 999;
+    display: none;   /* initially hidden */
+}
+
+.emoji-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 body {
     background-color: #333;
     color: #fff;

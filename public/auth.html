@@ -37,7 +37,6 @@
           const errorText = await response.text();
           console.error("Raw server response:", errorText);
           alert("Login failed.");
-          alert(data.error || "Login failed.");
           return;
         }
         

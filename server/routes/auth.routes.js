@@ -58,6 +58,29 @@ router.post('/login', loginLimiter, [
     return res.status(400).json({ errors: errors.array() });
   }
 
+router.post('/savePublicKey', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ") [1];
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { publicKey } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.userId,
+      { publicKey },
+      { new: true}
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ message: 'Public key saved Successfully' });
+  } catch (err) {
+    console.log("Failed to save public key:", err);
+    res.status(500).json({ error: 'Internal server error'});
+  }
+});
+
   const { username, password } = req.body;
 
   // Check if user exists

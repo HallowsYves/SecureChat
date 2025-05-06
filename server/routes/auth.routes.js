@@ -70,7 +70,7 @@ router.post('/login', loginLimiter, [
   const token = jwt.sign({ userId: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
 
   req.session.user = {
-    id: user_id,
+    id: user._id,
     username: user.username,
   };
 

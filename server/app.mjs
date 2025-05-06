@@ -1,4 +1,5 @@
 import express from 'express';
+import session from 'express-session';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
@@ -18,6 +19,15 @@ import authRoutes from './routes/auth.routes.js';
 import { logMessage } from './logger.js';
 
 dotenv.config();
+
+
+
+// SETUP session 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
 
 
 const raw = process.env.ALLOWED_ORIGINS || '';
@@ -92,6 +102,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Auth routes
 app.use('/auth', authRoutes);
+
+
+app.get('/chat.html', (req, res) => {
+  if (!req.session || !req.session.user) {
+    return res.redirect('auth.html');
+  }
+  res.sendFile(path.join(__dirname, '../public/chat.html'));
+})
+
 
 // Multer config for file uploads
 const upload = multer({ dest: 'uploads/' });

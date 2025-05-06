@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import rateLimit from 'express-rate-limit';
+import session from 'express-session';
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -67,6 +68,11 @@ router.post('/login', loginLimiter, [
 
   // Generate JWT Token
   const token = jwt.sign({ userId: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+
+  req.session.user = {
+    id: user_id,
+    username: user.username,
+  };
 
   // Log the sign-in event
   try {

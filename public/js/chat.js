@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)
 function generateConversationId(userA, userB) {
   return [userA, userB].sort().join('-');
@@ -18,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileButton = document.getElementById("fileButton");
   const fileInput = document.getElementById("fileInput");
 
-  const BACKEND_URL = dotenv.BACKEND_URL;
-
+  const BACKEND_URL = "https://securechat-olu7.onrender.com";
+  
   let currentConversationId = null;
   const currentUser = localStorage.getItem("username");
 

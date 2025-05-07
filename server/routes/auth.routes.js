@@ -41,23 +41,6 @@ router.get('/publicKey/:username', async (req, res) => {
 });
 
 // Login route with input sanitization and validation
-router.post('/login', loginLimiter, [
-  // Validate and sanitize inputs:
-  check('username')
-    .trim()
-    .escape()
-    .isLength({ min: 3, max: 20 })
-    .withMessage('Username must be 3-20 characters long'),
-  check('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long')
-], async (req, res) => {
-  // Check for validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
 router.post('/savePublicKey', async (req, res) => {
   try {
     console.log("savePublicKey route hit");
@@ -98,6 +81,23 @@ router.post('/savePublicKey', async (req, res) => {
     res.status(500).json({ error: 'Internal server error'});
   }
 });
+
+router.post('/login', loginLimiter, [
+  // Validate and sanitize inputs:
+  check('username')
+    .trim()
+    .escape()
+    .isLength({ min: 3, max: 20 })
+    .withMessage('Username must be 3-20 characters long'),
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
+], async (req, res) => {
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   const { username, password } = req.body;
 

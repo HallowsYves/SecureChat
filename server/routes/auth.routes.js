@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import rateLimit from 'express-rate-limit';
-import session from 'express-session';
+import { authMiddleware } from '../middleware/auth.js';
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

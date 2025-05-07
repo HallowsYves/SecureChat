@@ -60,20 +60,38 @@ router.post('/login', loginLimiter, [
 
 router.post('/savePublicKey', async (req, res) => {
   try {
+    console.log("savePublicKey route hit");
     const token = req.headers.authorization?.split(" ") [1];
+
+    if (!token) {
+      console.log("No token provided");
+      return res.status(401).json({ error: 'Unauthorized: No Token'});
+    }
+
     const decoded = jwt.verify(token, SECRET_KEY);
+    console.log("Token Decoded");
     const { publicKey } = req.body;
+
+    if (!publicKey) {
+      console.log("No publicKey in request body");
+      return res.status(400).json({ error: 'Bad Request: No public key'});
+    }
+
+    console.log("Attempting to update user ID:", decoded.userId);
+    console.log("Public Key:", JSON.stringify(publicKey));
 
     const updatedUser = await User.findByIdAndUpdate(
       decoded.userId,
       { publicKey },
-      { new: true}
+      { new: true }
     );
 
     if (!updatedUser) {
+      console.log("User not found in database");
       return res.status(404).json({ error: 'User not found' });
     }
 
+    console.log("User updated with public key");
     res.json({ message: 'Public key saved Successfully' });
   } catch (err) {
     console.log("Failed to save public key:", err);

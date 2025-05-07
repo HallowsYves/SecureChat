@@ -81,6 +81,11 @@
 
     const publicKey = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
     const privateKey = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+    console.log("Exported publicKey (JWK):", publicKey);
+    // Display public key on page for debugging
+    const pre = document.createElement('pre');
+    pre.textContent = JSON.stringify(publicKey, null, 2);
+    document.body.appendChild(pre);
 
     
     localStorage.setItem("privateKey", JSON.stringify(privateKey));

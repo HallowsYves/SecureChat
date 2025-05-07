@@ -34,9 +34,15 @@ router.get('/users', async (req, res) => {
   }
 });
 
-router.get('/publicKey/:username', async (req, res) => {
-  const user = await User.findOne({ username: req.params.username });
-  if (!user || !user.publicKey) return res.status(404).json({ error: 'User not found' });
+router.get('/publicKey/:username', authMiddleware, async (req, res) => {
+  const { username } = req.params;
+  
+  // Fetch from DB
+  const user = await User.findOne({username});
+  if (!user.publicKey)
+    {
+      return res.status(404).json({ error: 'User not found' });
+    } 
   res.json({ publicKey: user.publicKey });
 });
 

@@ -3,6 +3,7 @@ function generateConversationId(userA, userB) {
   return [userA, userB].sort().join('-');
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
   // Establish Socket.IO connection
   const socket = io();
@@ -23,11 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // HELPER FUNCTIONS
   async function getPrivateKey() {
     const privateKeyJwk = JSON.parse(localStorage.getItem("privateKey"));
-    if (!privateKeyJwk) {
-      console.error("No private key found in localStorage");
-      return null;
-    }
-
     return await window.crypto.subtle.importKey(
       "jwk",
       privateKeyJwk,
@@ -237,12 +233,13 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
         let decryptedText = "[Unable to decrypt]";
         try {
           const privateKey = await getPrivateKey();
-          const decryptedBuffer = await window.crypto.subtle.decrypt(
+          const cipherBytes = base64ToArrayBuffer(msg.text);
+          const plainBuffer = await window.crypto.subtle.decrypt(
             { name: "RSA-OAEP" },
             privateKey,
-            base64ToArrayBuffer(msg.text)
+            cipherBytes
           );
-          decryptedText = new TextDecoder().decode(decryptedBuffer);
+          decryptedText = new TextDecoder().decode(plainBuffer);
         } catch (err) {
           console.error("Failed to decrypt message:", err);
         }
@@ -250,7 +247,6 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
         messagesList.appendChild(li);
       })();
       return;
-      
     } else {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;
     }

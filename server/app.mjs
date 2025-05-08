@@ -33,6 +33,12 @@ const allowedOrigins = raw
   .flatMap(o => o.startsWith('http') ? [o] : [])
 ;
 
+// Ensure file‑sharing origin is allowed
+const fileSharingOrigin = 'https://securechat-file-sharing.onrender.com';
+if (!allowedOrigins.includes(fileSharingOrigin)) {
+  allowedOrigins.push(fileSharingOrigin);
+}
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {

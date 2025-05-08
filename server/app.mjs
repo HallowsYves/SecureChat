@@ -51,7 +51,13 @@ const allowedOrigins = raw
 ;
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for origin: ' + origin));
+    }
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
 };

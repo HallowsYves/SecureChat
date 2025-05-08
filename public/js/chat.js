@@ -1,3 +1,5 @@
+const { default: firebase } = require("firebase/compat/app");
+
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)
 function generateConversationId(userA, userB) {
   return [userA, userB].sort().join('-');
@@ -45,6 +47,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     return bytes.buffer;
   }
+
+  // FIREBASE
+
+  // FIREBASE HELPER FUNCTIONS
+  async function uploadFileToFirebase(file) {
+    const timestamp = Date.now();
+    const ref = firebase.storage().ref(`uploads/${timestamp}-${file.name}`);
+    await ref.put(file);
+    return await ref.getDownloadURL();
+  }
+
+
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+  const maxSize = 5 * 1024 * 1024; // 5MB
+
+  document.getElementByIdById("fileInput").addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Unsupported file type.");
+      return;
+    }
+
+    if (file.size > maxSize) {
+      alert("File too large.");
+      return;
+    }
+
+    const url = await uploadFileToFirebase(file);
+
+    socket.emit("message", {
+      conversationId: currentConversationId,
+      type: 'file',
+      sender: currentUser,
+      url,
+      filename: file.name
+    });
+  });
 
   // Load user list from server and populate sidebar
   async function loadUserList() {

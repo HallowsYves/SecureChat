@@ -27,6 +27,8 @@ const __dirname = path.dirname(__filename);
 
 // SETUP session 
 const app = express();
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Serve front end
 app.use(express.static(path.join(__dirname, '../public')));
@@ -107,8 +109,7 @@ app.get('*.mjs', function(req, res, next) {
 });
 
 // Middleware
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

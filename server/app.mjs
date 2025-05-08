@@ -25,35 +25,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-const raw = process.env.ALLOWED_ORIGINS || '';
-const allowedOrigins = raw
-  .split(',')
-  .map(origin => origin.trim())
-  // ensure both http/https variants
-  .flatMap(o => o.startsWith('http') ? [o] : [])
-;
-
-// Ensure file‑sharing origin is allowed
-const fileSharingOrigin = 'https://securechat-file-sharing.onrender.com';
-if (!allowedOrigins.includes(fileSharingOrigin)) {
-  allowedOrigins.push(fileSharingOrigin);
-}
-
-const corsOptions = {
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200,
-  credentials: true
-};
-
-console.log('CORS allowing origins: ', allowedOrigins);
+// Allow all origins for testing
+// NOTE: In production, restrict CORS as needed!
 
 // SETUP session 
 const app = express();
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// Allow all origins for testing
+app.use(cors({ origin: true, credentials: true }));
+app.options('*', cors({ origin: true, credentials: true }));
 
 // Serve front end
 app.use(express.static(path.join(__dirname, '../public')));
@@ -104,7 +84,10 @@ if (useHttps === 'true') {
 
 
 
-const io = new Server(server, {cors: corsOptions});
+// Socket.IO allowing all origins for testing
+const io = new Server(server, {
+  cors: { origin: true, credentials: true }
+});
 
 // MIME type for .mjs files so browsers don't reject
 app.get('*.mjs', function(req, res, next) {
@@ -120,7 +103,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Auth routes
-app.use('/auth', cors(corsOptions), authRoutes);
+app.use('/auth', cors({ origin: true, credentials: true }), authRoutes);
 
 
 app.get('/chat.html', (req, res) => {

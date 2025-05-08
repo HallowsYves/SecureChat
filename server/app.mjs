@@ -21,29 +21,6 @@ import { logMessage } from './logger.js';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-
-// SETUP session 
-const app = express();
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// Serve front end
-app.use(express.static(path.join(__dirname, '../public')));
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.DB_URL,
-    collectionName: 'sessions'
-  }),
-}));
-
-
 const raw = process.env.ALLOWED_ORIGINS || '';
 const allowedOrigins = raw
   .split(',')
@@ -65,6 +42,30 @@ const corsOptions = {
 };
 
 console.log('CORS allowing origins: ', allowedOrigins);
+
+// SETUP session 
+const app = express();
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Serve front end
+app.use(express.static(path.join(__dirname, '../public')));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.DB_URL,
+    collectionName: 'sessions'
+  }),
+}));
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // Generate UUID for a unique session ID per socket connection
 function generateUUID() {
@@ -109,7 +110,6 @@ app.get('*.mjs', function(req, res, next) {
 });
 
 // Middleware
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

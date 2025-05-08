@@ -21,6 +21,10 @@ import { logMessage } from './logger.js';
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 const raw = process.env.ALLOWED_ORIGINS || '';
 const allowedOrigins = raw
   .split(',')
@@ -62,9 +66,6 @@ app.use(session({
   }),
 }));
 
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 
 // Generate UUID for a unique session ID per socket connection

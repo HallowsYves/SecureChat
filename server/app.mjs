@@ -48,6 +48,8 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
   credentials: true
 };
 
@@ -124,7 +126,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Auth routes
-app.use('/auth', authRoutes);
+app.use('/auth', cors(corsOptions), authRoutes);
 
 
 app.get('/chat.html', (req, res) => {

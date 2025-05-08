@@ -43,12 +43,20 @@ app.use(session({
 
 
 const raw = process.env.ALLOWED_ORIGINS || '';
-const allowedOrigins = raw
-  .split(',')
-  .map(origin => origin.trim())
-  // ensure both http/https variants
-  .flatMap(o => o.startsWith('http') ? [o] : [])
-;
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log(` Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true
+};
 
 const corsOptions = {
   origin: function (origin, callback) {

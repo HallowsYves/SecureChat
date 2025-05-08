@@ -10,7 +10,6 @@ const firebaseConfig = {
 };
 if (typeof firebase !== 'undefined') {
     firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
     console.log("Firebase initialized successfully.");
 } else {
     console.error("Firebase SDK not loaded before config.js");

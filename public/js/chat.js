@@ -267,7 +267,8 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       conversationId: currentConversationId,
       type: 'text',
       text: encryptedBase64,
-      sender: currentUser || "Anonymous"
+      sender: currentUser || "Anonymous",
+      plaintext: message
     });
     messageInput.value = "";
   } else {
@@ -288,23 +289,28 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
     } else if (msg.type === 'text') {
-      (async () => {
-        let decryptedText = "[Unable to decrypt]";
-        try {
-          const privateKey = await getPrivateKey();
-          const cipherBytes = base64ToArrayBuffer(msg.text);
-          const plainBuffer = await window.crypto.subtle.decrypt(
-            { name: "RSA-OAEP" },
-            privateKey,
-            cipherBytes
-          );
-          decryptedText = new TextDecoder().decode(plainBuffer);
-        } catch (err) {
-          console.error("Failed to decrypt message:", err);
-        }
-        li.innerHTML = `${msg.sender}: ${decryptedText}`;
+      if (msg.sender === currentUser && msg.plaintext) {
+        li.innerHTML = `${msg.sender}: ${msg.plaintext}`;
         messagesList.appendChild(li);
-      })();
+      } else {
+        (async () => {
+          let decryptedText = "[Unable to decrypt]";
+          try {
+            const privateKey = await getPrivateKey();
+            const cipherBytes = base64ToArrayBuffer(msg.text);
+            const plainBuffer = await window.crypto.subtle.decrypt(
+              { name: "RSA-OAEP" },
+              privateKey,
+              cipherBytes
+            );
+            decryptedText = new TextDecoder().decode(plainBuffer);
+          } catch (err) {
+            console.error("Failed to decrypt message:", err);
+          }
+          li.innerHTML = `${msg.sender}: ${decryptedText}`;
+          messagesList.appendChild(li);
+        })();
+      }
       return;
     } else {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;

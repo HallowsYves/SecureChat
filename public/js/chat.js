@@ -263,8 +263,6 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     );
     const encryptedBase64 = arrayBufferToBase64(encrypted);
 
-    console.log("📤 Sending encrypted message:", encryptedBase64);
-
     socket.emit("message", {
       conversationId: currentConversationId,
       type: 'text',
@@ -286,23 +284,16 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     const li = document.createElement("li");
     if (msg.type === 'file') {
       if (msg.mimetype && msg.mimetype.startsWith("image/")) {
-        li.innerHTML = `<strong>${msg.sender}:</strong> <img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px; vertical-align: middle;">`;
+        li.innerHTML = `${msg.sender}:<br/><img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px;">`;
       } else {
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
     } else if (msg.type === 'text') {
-      console.log("Raw encrypted message received:", msg.text);
-
-      // Guard to skip bad base64 messages
-      if (!msg.text || typeof msg.text !== "string" || !/^[A-Za-z0-9+/=]+={0,2}$/.test(msg.text)) {
-        console.warn(" Skipping invalid base64 message from", msg.sender);
-        return;
-      }
-
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
         const safeHtml = DOMPurify.sanitize(rawHtml);
-        li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${safeHtml}</span>`;
+        li.innerHTML = `${msg.sender}: ${safeHtml}`;
+        messagesList.appendChild(li);
       } else {
         (async () => {
           let decryptedText = "[Unable to decrypt]";
@@ -318,10 +309,10 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
           } catch (err) {
             console.error("Failed to decrypt message:", err);
           }
-          li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${decryptedText}</span>`;
+          li.innerHTML = `${msg.sender}: ${decryptedText}`;
+          messagesList.appendChild(li);
         })();
       }
-      messagesList.appendChild(li);
       return;
     } else {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;

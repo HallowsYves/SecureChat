@@ -40,6 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Establish Socket.IO connection
   const socket = io();
 
+
+  // Online / Offline
+  window.addEventListener("beforeunload", () => {
+    socket.emit("userDisconnected", currentUser);
+  });
+
+  socket.emit("userConnected", currentUser);
+
   // Get DOM elements
   const chatTitle = document.getElementById("chatTitle");
   const userList = document.getElementById("userList");
@@ -48,6 +56,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendButton = document.getElementById("sendButton");
   const fileButton = document.getElementById("fileButton");
   const fileInput = document.getElementById("fileInput");
+  const typingIndicator = document.getElementById("typingIndicator");
+
+
+  // Typing indicator 
+  let typingTimeout;
+
+  messageInput.addEventListener("input", () => {
+    const recipient = chatTitle.textContent.replace("Talking with: ", "").trim();
+    socket.emit("Typing", {user: currentUser, to:recipient});
+
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.emit("stopTyping", { user: currentUser, to:recipient});
+    }, 1000);
+  });
 
   const BACKEND_URL = "https://securechat-olu7.onrender.com";
   let currentConversationId = null;
@@ -287,6 +310,14 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;
     }
     messagesList.appendChild(li);
+  });
+
+  socket.on("typing", ({ user }) => {
+    typingIndicator.textContent = `${user} is typing...`;
+  });
+
+  socket.on("stopTyping", ({ user }) => {
+    typingIndicator.textContent = "";
   });
 
   // Listen for session assignment (optional)

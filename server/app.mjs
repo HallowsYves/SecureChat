@@ -197,7 +197,37 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
+    if (socket.username) {
+      socket.broadcast.emit("userDisconnected", socket.username);
+    }
   });
+
+  socket.on("userConnected", (username) => {
+    socket.username = username; // store for later disconnect
+    console.log(`${username} is online`);
+    socket.broadcast.emit("userConnected", username);
+  });
+  
+  socket.on("typing", ({ user, to }) => {
+    const conversationId = [user, to].sort().join("-");
+    socket.to(conversationId).emit("typing", { user });
+  });
+
+  socket.on("stopTyping", ({ user, to }) => {
+    const conversationId = [user, to].sort().join("-");
+    socket.to(conversationId).emit("stopTyping", { user });
+  });
+
+  socket.on("userConnected", (username) => {
+    console.log(`${username} is online`);
+    socket.broadcast.emit("userConnected", username);
+  });
+
+  socket.on("userDisconnected", (username) => {
+    console.log(`${username} disconnected`);
+    socket.broadcast.emit("userDisconnected", username);
+  });
+
 });
 
 // Start server

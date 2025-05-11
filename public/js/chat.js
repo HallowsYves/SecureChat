@@ -291,9 +291,8 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     } else if (msg.type === 'text') {
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
-        const safeHtml = DOMPurify.sanitize(rawHtml); // Optional: if you're already using DOMPurify
+        const safeHtml = DOMPurify.sanitize(rawHtml);
         li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${safeHtml}</span>`;
-        messagesList.appendChild(li);
       } else {
         (async () => {
           let decryptedText = "[Unable to decrypt]";
@@ -310,9 +309,9 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
             console.error("Failed to decrypt message:", err);
           }
           li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${decryptedText}</span>`;
-          messagesList.appendChild(li);
         })();
       }
+      messagesList.appendChild(li);
       return;
     } else {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;

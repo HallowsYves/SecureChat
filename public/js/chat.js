@@ -284,7 +284,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     const li = document.createElement("li");
     if (msg.type === 'file') {
       if (msg.mimetype && msg.mimetype.startsWith("image/")) {
-        li.innerHTML = `${msg.sender}:<br/><img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px;">`;
+        li.innerHTML = `<strong>${msg.sender}:</strong> <img src="${msg.fileUrl}" alt="${msg.originalName}" style="max-width:200px; vertical-align: middle;">`;
       } else {
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
@@ -292,7 +292,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
         const safeHtml = DOMPurify.sanitize(rawHtml); // Optional: if you're already using DOMPurify
-        li.innerHTML = `${msg.sender}: ${safeHtml}`;
+        li.innerHTML = `<strong>${msg.sender}:</strong> ${safeHtml}`;
         messagesList.appendChild(li);
       } else {
         (async () => {
@@ -309,7 +309,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
           } catch (err) {
             console.error("Failed to decrypt message:", err);
           }
-          li.innerHTML = `${msg.sender}: ${decryptedText}`;
+          li.innerHTML = `<strong>${msg.sender}:</strong> ${decryptedText}`;
           messagesList.appendChild(li);
         })();
       }

@@ -105,3 +105,12 @@ button {
 button:hover {
     background-color: #666;
 }
+
+/* Online/Offline user status styling */
+#sidebar ul li.online::before {
+    content: "🟢 ";
+}
+
+#sidebar ul li.offline::before {
+    content: "🔴 ";
+}

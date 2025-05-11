@@ -1,3 +1,11 @@
+// Update user status UI (online/offline)
+function updateUserStatus(username, isOnline) {
+  const userItems = document.querySelectorAll(`#userList li[data-username="${username}"]`);
+  userItems.forEach(li => {
+    li.classList.toggle("online", isOnline);
+    li.classList.toggle("offline", !isOnline);
+  });
+}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { getAuth, signInAnonymously, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -318,6 +326,15 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       li.textContent = `${msg.sender}: ${JSON.stringify(msg)}`;
     }
     messagesList.appendChild(li);
+  });
+
+  // Listen for user status updates
+  socket.on("userConnected", (username) => {
+    updateUserStatus(username, true);
+  });
+
+  socket.on("userDisconnected", (username) => {
+    updateUserStatus(username, false);
   });
 
   socket.on("typing", ({ user }) => {

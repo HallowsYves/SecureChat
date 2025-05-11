@@ -21,9 +21,6 @@
   <script type="module" src="js/chat.js"></script>
 
 
-  <!-- DOMPurify -->
-  
-
 
 
   <!-- Initial Authentication & Username Check -->
@@ -83,6 +80,39 @@
     </div>
   </div>
 
+  <!-- User presence status script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const socket = window.io?.();
+
+      // Mark users online when onlineUsers event is received
+      socket?.on("onlineUsers", (users) => {
+        users.forEach(username => {
+          const userElement = document.querySelector(`#userList li[data-username="${username}"]`);
+          if (userElement) {
+            userElement.classList.add("online");
+            userElement.classList.remove("offline");
+          }
+        });
+      });
+
+      socket?.on("userConnected", (username) => {
+        const userElement = document.querySelector(`#userList li[data-username="${username}"]`);
+        if (userElement) {
+          userElement.classList.add("online");
+          userElement.classList.remove("offline");
+        }
+      });
+
+      socket?.on("userDisconnected", (username) => {
+        const userElement = document.querySelector(`#userList li[data-username="${username}"]`);
+        if (userElement) {
+          userElement.classList.remove("online");
+          userElement.classList.add("offline");
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

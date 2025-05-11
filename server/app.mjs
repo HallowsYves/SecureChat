@@ -143,9 +143,12 @@ mongoose.connect(process.env.DB_URL,)
 
 // WebSocket Chat Logic
 io.on("connection", (socket) => {
+  const onlineUsers = new Set();
+
   // Unique sessionId for this connection
   const sessionId = generateUUID();
   socket.emit("sessionAssigned", { sessionId });
+  socket.emit("onlineUsers", Array.from(onlineUsers));
   console.log(`New user connected: ${socket.id} with session: ${sessionId}`);
 
   // Join a conversation (room) when requested
@@ -198,14 +201,16 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
     if (socket.username) {
-      socket.broadcast.emit("userDisconnected", socket.username);
+      onlineUsers.delete(socket.username);
+      io.emit("userDisconnected", socket.username);
     }
   });
 
   socket.on("userConnected", (username) => {
-    socket.username = username; // store for later disconnect
+    socket.username = username;
+    onlineUsers.add(username);
     console.log(`${username} is online`);
-    socket.broadcast.emit("userConnected", username);
+    io.emit("userConnected", username);
   });
   
   socket.on("typing", ({ user, to }) => {

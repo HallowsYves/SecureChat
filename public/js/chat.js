@@ -292,7 +292,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
         const safeHtml = DOMPurify.sanitize(rawHtml); // Optional: if you're already using DOMPurify
-        li.innerHTML = `<strong>${msg.sender}:</strong> ${safeHtml}`;
+        li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${safeHtml}</span>`;
         messagesList.appendChild(li);
       } else {
         (async () => {
@@ -309,7 +309,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
           } catch (err) {
             console.error("Failed to decrypt message:", err);
           }
-          li.innerHTML = `<strong>${msg.sender}:</strong> ${decryptedText}`;
+          li.innerHTML = `<strong>${msg.sender}:</strong> <span style="display: inline;">${decryptedText}</span>`;
           messagesList.appendChild(li);
         })();
       }

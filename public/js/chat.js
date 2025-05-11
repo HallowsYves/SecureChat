@@ -263,6 +263,8 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     );
     const encryptedBase64 = arrayBufferToBase64(encrypted);
 
+    console.log("📤 Sending encrypted message:", encryptedBase64);
+
     socket.emit("message", {
       conversationId: currentConversationId,
       type: 'text',
@@ -289,6 +291,14 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
         li.innerHTML = `${msg.sender}: <a href="${msg.fileUrl}" target="_blank">${msg.originalName}</a>`;
       }
     } else if (msg.type === 'text') {
+      console.log("Raw encrypted message received:", msg.text);
+
+      // Guard to skip bad base64 messages
+      if (!msg.text || typeof msg.text !== "string" || !/^[A-Za-z0-9+/=]+={0,2}$/.test(msg.text)) {
+        console.warn(" Skipping invalid base64 message from", msg.sender);
+        return;
+      }
+
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
         const safeHtml = DOMPurify.sanitize(rawHtml);

@@ -166,15 +166,15 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // If it's a text message, convert Markdown to HTML and sanitize
-    if (data.type === 'text' && data.text) {
-      let htmlContent = marked.parse(data.text);
+    // If it's a text message, convert Markdown to HTML and sanitize, but do not overwrite encrypted base64 text
+    if (data.type === 'text' && data.plaintext) {
+      let htmlContent = marked.parse(data.plaintext);
       htmlContent = sanitizeHtml(htmlContent, {
         allowedTags: ['b', 'strong', 'i', 'em', 'u', 'a', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'p', 'br'],
         allowedAttributes: { 'a': ['href', 'target'] },
         allowedSchemes: ['http', 'https', 'mailto']
       });
-      data.text = htmlContent;
+      data.html = htmlContent; // Preserve base64 text; store formatted HTML separately
     }
 
     // Log the message using conversationId

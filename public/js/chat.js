@@ -1,3 +1,6 @@
+import { storage } from "./firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)
 function generateConversationId(userA, userB) {
   return [userA, userB].sort().join('-');
@@ -117,29 +120,24 @@ document.addEventListener("DOMContentLoaded", () => {
   fileInput.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
-    const formData = new FormData();
-    formData.append("myFile", file);
-
+  
     try {
-      const res = await fetch(`${BACKEND_URL}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (data && data.fileUrl) {
+      const storageRef = ref(storage, `chat_uploads/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const fileUrl = await getDownloadURL(storageRef);
+  
+      if (fileUrl) {
         const fileMessage = {
           conversationId: currentConversationId,
           type: 'file',
           sender: currentUser,
-          fileUrl: data.fileUrl,
-          originalName: data.originalName || file.name,
-          mimetype: data.mimetype
+          fileUrl: fileUrl,
+          originalName: file.name,
+          mimetype: file.type
         };
         socket.emit("message", fileMessage);
       } else {
-        console.error("File upload failed: missing fileUrl in response", data);
+        console.error("File upload failed: missing fileUrl");
       }
     } catch (error) {
       console.error("File upload error:", error);

@@ -16,6 +16,42 @@
   <script src="config.js"></script>
   <script type="module" src="js/chat.js"></script>
 
+  <!-- Firebase File Upload Handler -->
+  <script type="module">
+    import { storage } from './js/firebase.js';
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('fileInput');
+      const fileButton = document.getElementById('fileButton');
+
+      fileButton.addEventListener('click', () => {
+        fileInput.click(); // trigger file input dialog
+      });
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const storageRef = ref(storage, `chat_uploads/${Date.now()}_${file.name}`);
+        try {
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          console.log("File uploaded:", url);
+
+          // Emit file link as message (ensure your socket setup handles this format)
+          window.socket.emit('chat message', {
+            fileURL: url,
+            fileName: file.name,
+            username: localStorage.getItem("username")
+          });
+        } catch (err) {
+          console.error("File upload error:", err);
+        }
+      });
+    });
+  </script>
+
   
 
 

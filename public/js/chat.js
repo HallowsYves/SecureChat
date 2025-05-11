@@ -300,7 +300,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       if (msg.sender === currentUser && msg.plaintext) {
         const rawHtml = marked.parse(msg.plaintext);
         const safeHtml = DOMPurify.sanitize(rawHtml);
-        li.innerHTML = `${msg.sender}: ${safeHtml}`;
+        li.innerHTML = `<strong>${msg.sender}:</strong> ${safeHtml}`;
         messagesList.appendChild(li);
       } else {
         (async () => {
@@ -314,10 +314,13 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
               cipherBytes
             );
             decryptedText = new TextDecoder().decode(plainBuffer);
+            const rawHtml = marked.parse(decryptedText);
+            const safeHtml = DOMPurify.sanitize(rawHtml);
+            li.innerHTML = `<strong>${msg.sender}:</strong> ${safeHtml}`;
           } catch (err) {
             console.error("Failed to decrypt message:", err);
+            li.innerHTML = `<strong>${msg.sender}:</strong> [Unable to decrypt]`;
           }
-          li.innerHTML = `${msg.sender}: ${decryptedText}`;
           messagesList.appendChild(li);
         })();
       }

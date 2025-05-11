@@ -13,6 +13,7 @@ const firebaseConfig = {
   appId: "1:341631280166:web:c7020a040bdfe54fc672e7"
 };
 
+
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
@@ -41,10 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const socket = io();
 
 
-  // Online / Offline
-  window.addEventListener("beforeunload", () => {
-    socket.emit("userDisconnected", currentUser);
-  });
+
 
   socket.emit("userConnected", currentUser);
 
@@ -75,6 +73,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const BACKEND_URL = "https://securechat-olu7.onrender.com";
   let currentConversationId = null;
   const currentUser = localStorage.getItem("username");
+
+  // Online / Offline
+  window.addEventListener("beforeunload", () => {
+    socket.emit("userDisconnected", currentUser);
+  });
 
   // HELPER FUNCTIONS
   async function getPrivateKey() {
@@ -158,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   emojiPicker.addEventListener('emoji-click', event => {
-    messageInput.value += event.detail.unicode;
     messageInput.value += event.detail.unicode;
     emojiPicker.style.display = 'none';
   }) 

@@ -38,11 +38,12 @@ function generateConversationId(userA, userB) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  const BACKEND_URL = "https://securechat-olu7.onrender.com";
+  let currentConversationId = null;
+  const currentUser = localStorage.getItem("username");
+
   // Establish Socket.IO connection
   const socket = io();
-
-
-
 
   socket.emit("userConnected", currentUser);
 
@@ -70,9 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 
-  const BACKEND_URL = "https://securechat-olu7.onrender.com";
-  let currentConversationId = null;
-  const currentUser = localStorage.getItem("username");
 
   // Online / Offline
   window.addEventListener("beforeunload", () => {

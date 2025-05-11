@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMM9I-7dL77Jd-GNaCGk9KCuW73eVkkxs",
@@ -13,6 +15,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
+
+const auth = getAuth(app);
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Signed in anonymously");
+  })
+  .catch((error) => {
+    console.error("Anonymous sign-in failed", error);
+  });
+
+  
 // Helper: Generate a conversation ID from two usernames (alphabetically sorted)
 function generateConversationId(userA, userB) {
   return [userA, userB].sort().join('-');
@@ -134,6 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!file) return;
   
     try {
+      if (!file.type.match(/^image\/(png|jpe?g|gif)$/)) {
+        alert("Only PNG, JPG, JPEG, and GIF files are allowed.");
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File must be 5MB or smaller.");
+        return;
+      }
       const storageRef = ref(storage, `chat_uploads/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const fileUrl = await getDownloadURL(storageRef);

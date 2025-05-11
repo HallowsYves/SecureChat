@@ -290,7 +290,9 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
       }
     } else if (msg.type === 'text') {
       if (msg.sender === currentUser && msg.plaintext) {
-        li.innerHTML = `${msg.sender}: ${msg.plaintext}`;
+        const rawHtml = marked.parse(msg.plaintext);
+        const safeHtml = DOMPurify.sanitize(rawHtml); // Optional: if you're already using DOMPurify
+        li.innerHTML = `${msg.sender}: ${safeHtml}`;
         messagesList.appendChild(li);
       } else {
         (async () => {

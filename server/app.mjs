@@ -214,8 +214,9 @@ io.on("connection", (socket) => {
   });
   
   socket.on("typing", ({ user, to }) => {
-    const conversationId = [user, to].sort().join("-");
-    socket.to(conversationId).emit("typing", { user });
+    const room = [user, to].sort().join("-");
+    console.log(`[Server] ${user} is typing to ${to} in ${room}`);
+    socket.to(room).emit("typing", { user });
   });
 
   socket.on("stopTyping", ({ user, to }) => {

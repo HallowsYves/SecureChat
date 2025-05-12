@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   messageInput.addEventListener("input", () => {
     if (!currentRecipient) return;
+    console.log(`Emitting Typing from ${currentUser} to ${currentRecipient}`);
     socket.emit("Typing", { user: currentUser, to: currentRecipient });
   
     clearTimeout(typingTimeout);
@@ -344,6 +345,7 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
   });
 
   socket.on("typing", ({ user }) => {
+    console.log(`${user} is typing...`); // Debug
     typingIndicator.textContent = `${user} is typing...`;
   });
 

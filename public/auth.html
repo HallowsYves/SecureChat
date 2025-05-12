@@ -65,6 +65,8 @@
     });
 
     async function generateKeyPairAndUpload(token) {
+      console.log(" Running generateKeyPairAndUpload with token:", token);
+
       const keyPair = await window.crypto.subtle.generateKey(
         {
           name: "RSA-OAEP",
@@ -82,6 +84,8 @@
       localStorage.setItem("privateKey", JSON.stringify(privateKey));
       localStorage.setItem("publicKey", JSON.stringify(publicKey));
 
+      console.log(" Attempting to upload public key:", publicKey);
+
       try {
         const res = await fetch(`${BACKEND_URL}/auth/savePublicKey`, {
           method: 'POST',
@@ -94,13 +98,13 @@
 
         if (!res.ok) {
           const error = await res.text();
-          console.error("Failed to upload public key:", error);
+          console.error(" Failed to upload public key:", error);
           alert("Could not save public key to server.");
         } else {
           console.log(" Public key saved successfully.");
         }
       } catch (err) {
-        console.error("Error saving public key:", err);
+        console.error(" Error saving public key:", err);
         alert("Failed to upload public key.");
       }
     }

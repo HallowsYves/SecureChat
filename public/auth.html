@@ -46,11 +46,7 @@
         localStorage.setItem('username', data.username);
 
         try {
-          if (!localStorage.getItem("privateKey")) {
-            await generateKeyPairAndUpload(data.token);
-          } else {
-            console.log("Using existing encryption key");
-          }
+          await generateKeyPairAndUpload(data.token);
         } catch (e) {
           console.error("Key Generation or upload failed: ", e);
           alert("Encryption Setup Error.");

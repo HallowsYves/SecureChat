@@ -13,9 +13,10 @@ SecureChat is a secure, real-time messaging platform built with Node.js, Express
 
 
 ## Updated Changelog
-* Can be connected to from any device, instead of having to use local network
-* MongoDB switched from local to actually being hosted on MongoDB
-* End to End Encryption implemented
-* Swapped older Emoji picker to newer, Old one was depricated.
-* Supports the uploading of files, and the use of emojis, and basic Markdown functions such as __bold__ and _itallics_
-  
+* Can be connected to from any device, instead of having to use local network.
+* Online|Offline Users are now displayed with 🟢|🔴 respectively.
+* Switched from local DB hosting to online hosting.
+* End to End Encryption implemented.
+* Swapped older Emoji picker to newer, Old one was deprecated.
+* File uploading is now hosted on Firebase, With file upload limitations and basic malware scanning.
+* Supports basic Markdown functions such as __bold__ and _italics_

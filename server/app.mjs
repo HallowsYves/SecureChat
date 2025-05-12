@@ -223,11 +223,6 @@ io.on("connection", (socket) => {
     socket.to(conversationId).emit("stopTyping", { user });
   });
 
-  socket.on("userConnected", (username) => {
-    console.log(`${username} is online`);
-    socket.broadcast.emit("userConnected", username);
-  });
-
   socket.on("userDisconnected", (username) => {
     console.log(`${username} disconnected`);
     socket.broadcast.emit("userDisconnected", username);

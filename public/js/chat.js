@@ -48,6 +48,7 @@ function generateConversationId(userA, userB) {
 document.addEventListener("DOMContentLoaded", () => {
   const BACKEND_URL = "https://securechat-olu7.onrender.com";
   let currentConversationId = null;
+  let currentRecipient = null;
   const currentUser = localStorage.getItem("username");
 
   // Establish Socket.IO connection
@@ -70,13 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let typingTimeout;
 
   messageInput.addEventListener("input", () => {
-    const recipient = chatTitle.textContent.replace("Talking with: ", "").trim();
-    socket.emit("Typing", {user: currentUser, to:recipient});
-
+    if (!currentRecipient) return;
+    socket.emit("Typing", { user: currentUser, to: currentRecipient });
+  
     clearTimeout(typingTimeout);
     typingTimeout = setTimeout(() => {
-      socket.emit("stopTyping", { user: currentUser, to:recipient});
-    }, 1000);
+      socket.emit("stopTyping", { user: currentUser, to: currentRecipient });
+    }, 3000);
   });
 
 
@@ -138,6 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update chat title
       chatTitle.textContent = `Talking with: ${selectedUser}`;
+      currentRecipient = selectedUser;
+
 
       // Generate conversationId for a one-to-one chat between currentUser and selectedUser
       currentConversationId = generateConversationId(currentUser, selectedUser);

@@ -213,10 +213,10 @@ io.on("connection", (socket) => {
     io.emit("userConnected", username);
   });
   
-  socket.on("typing", ({ user, to }) => {
-    const room = [user, to].sort().join("-");
-    console.log(`[Server] ${user} is typing to ${to} in ${room}`);
-    socket.to(room).emit("typing", { user });
+  socket.on("Typing", ({ user, to }) => {
+    const conversationId = [user, to].sort().join("-");
+    console.log(`[Server] Relaying typing from ${user} to ${to} in ${conversationId}`);
+    socket.to(conversationId).emit("typing", { user });
   });
 
   socket.on("stopTyping", ({ user, to }) => {

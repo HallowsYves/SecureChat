@@ -344,9 +344,10 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     updateUserStatus(username, false);
   });
 
-  socket.on("typing", ({ user }) => {
-    console.log(`${user} is typing...`); // Debug
-    typingIndicator.textContent = `${user} is typing...`;
+  socket.on("Typing", ({ user, to }) => {
+    const conversationId = [user, to].sort().join("-");
+    console.log(`[Server] Relaying typing from ${user} to ${to} in ${conversationId}`);
+    socket.to(conversationId).emit("typing", { user });
   });
 
   socket.on("stopTyping", ({ user }) => {

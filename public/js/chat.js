@@ -64,22 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendButton = document.getElementById("sendButton");
   const fileButton = document.getElementById("fileButton");
   const fileInput = document.getElementById("fileInput");
-  const typingIndicator = document.getElementById("typingIndicator");
-
-
-  // Typing indicator 
-  let typingTimeout;
-
-  messageInput.addEventListener("input", () => {
-    if (!currentRecipient) return;
-    console.log(`Emitting Typing from ${currentUser} to ${currentRecipient}`);
-    socket.emit("Typing", { user: currentUser, to: currentRecipient });
-  
-    clearTimeout(typingTimeout);
-    typingTimeout = setTimeout(() => {
-      socket.emit("stopTyping", { user: currentUser, to: currentRecipient });
-    }, 3000);
-  });
 
 
   // Online / Offline
@@ -344,15 +328,6 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     updateUserStatus(username, false);
   });
 
-  socket.on("Typing", ({ user, to }) => {
-    const conversationId = [user, to].sort().join("-");
-    console.log(`[Server] Relaying typing from ${user} to ${to} in ${conversationId}`);
-    socket.to(conversationId).emit("typing", { user });
-  });
-
-  socket.on("stopTyping", ({ user }) => {
-    typingIndicator.textContent = "";
-  });
 
   // Listen for session assignment (optional)
   socket.on("sessionAssigned", (data) => {

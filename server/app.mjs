@@ -213,16 +213,6 @@ io.on("connection", (socket) => {
     io.emit("userConnected", username);
   });
   
-  socket.on("Typing", ({ user, to }) => {
-    const conversationId = [user, to].sort().join("-");
-    console.log(`[Server] Relaying typing from ${user} to ${to} in ${conversationId}`);
-    socket.to(conversationId).emit("typing", { user });
-  });
-
-  socket.on("stopTyping", ({ user, to }) => {
-    const conversationId = [user, to].sort().join("-");
-    socket.to(conversationId).emit("stopTyping", { user });
-  });
 
   socket.on("userDisconnected", (username) => {
     console.log(`${username} disconnected`);

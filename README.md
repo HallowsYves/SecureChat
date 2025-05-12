@@ -14,7 +14,7 @@ SecureChat is a secure, real-time messaging platform built with Node.js, Express
 
 ## Updated Changelog
 * Can be connected to from any device, instead of having to use local network.
-* Online|Offline Users are now displayed with 🟢|🔴 respectively.
+* Online | Offline Users are now displayed with 🟢|🔴 respectively.
 * Switched from local DB hosting to online hosting.
 * End to End Encryption implemented.
 * Swapped older Emoji picker to newer, Old one was deprecated.

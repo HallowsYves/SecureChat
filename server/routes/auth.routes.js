@@ -66,11 +66,11 @@ router.post('/savePublicKey', async (req, res) => {
       return res.status(400).json({ error: 'Bad Request: No public key'});
     }
 
-    console.log("Attempting to update user ID:", decoded.userId);
+    console.log("Attempting to update username:", decoded.username);
     console.log("Public Key:", JSON.stringify(publicKey));
 
-    const updatedUser = await User.findByIdAndUpdate(
-      decoded.userId,
+    const updatedUser = await User.findOneAndUpdate(
+      { username: decoded.username },
       { publicKey },
       { new: true }
     );

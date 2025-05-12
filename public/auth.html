@@ -86,14 +86,27 @@
     localStorage.setItem("publicKey", JSON.stringify(publicKey));
 
 
-    await fetch(`${BACKEND_URL}/auth/savePublicKey`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ publicKey })
-    });
+    try {
+      const res = await fetch(`${BACKEND_URL}/auth/savePublicKey`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ publicKey })
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Failed to upload public key:", error);
+        alert("Could not save public key to server.");
+      } else {
+        console.log("Public key saved successfully.");
+      }
+    } catch (err) {
+      console.error("Error saving public key:", err);
+      alert("Failed to upload public key.");
+    }
     }
 
   </script>

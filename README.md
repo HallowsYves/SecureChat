@@ -11,12 +11,12 @@ SecureChat is a secure, real-time messaging platform built with Node.js, Express
  * Secure Communication – Built with modern security practices to protect user data
 
 
-
 ## Updated Changelog
 * Can be connected to from any device, instead of having to use local network.
 * Online | Offline Users are now displayed with 🟢|🔴 respectively.
 * Switched from local DB hosting to online hosting.
 * End to End Encryption implemented.
 * Swapped older Emoji picker to newer, Old one was deprecated.
+* Basic rate limiting on requests to prevent abuse, If user attempts several logins within a short period of time they have to wait 15 mins
 * File uploading is now hosted on Firebase, With file upload limitations and basic malware scanning.
 * Supports basic Markdown functions such as __bold__ and _italics_
